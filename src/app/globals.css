@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "DM Sans", "Montserrat", system-ui, sans-serif;
+  --font-display: "Cinzel", "Bebas Neue", serif;
+  --font-serif: "Libre Baskerville", serif;
+}
+
+html,
+body {
+  background: #0a0a0c;
+  color: #ececf1;
+  min-height: 100%;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Survey public — scoped brand variables */
+.brand-cppem {
+  --b-bg: #0a0a0a;
+  --b-bg-alt: #111111;
+  --b-card: #111111;
+  --b-border: #1e1e1e;
+  --b-text: #f5f5f5;
+  --b-muted: #888888;
+  --b-primary: #00e63c;
+  --b-primary-text: #0a0a0a;
+  --b-accent: #c9a84c;
+  background: var(--b-bg);
+  color: var(--b-text);
+  font-family: "Montserrat", system-ui, sans-serif;
+}
+.brand-cppem .b-display {
+  font-family: "Bebas Neue", "Montserrat", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.brand-colegio {
+  --b-bg: #0d1b3e;
+  --b-bg-alt: #162247;
+  --b-card: #162247;
+  --b-border: rgba(201, 162, 39, 0.25);
+  --b-text: #ffffff;
+  --b-muted: #8a9bb8;
+  --b-primary: #c9a227;
+  --b-primary-text: #0d1b3e;
+  --b-accent: #e8c350;
+  background: var(--b-bg);
+  color: var(--b-text);
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+.brand-colegio .b-display {
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.05em;
+}
+
+/* Utility classes scoped to brand vars */
+.b-card-surface {
+  background: var(--b-card);
+  border: 1px solid var(--b-border);
+}
+.b-primary-bg {
+  background: var(--b-primary);
+  color: var(--b-primary-text);
+}
+.b-primary-text {
+  color: var(--b-primary);
+}
+.b-muted {
+  color: var(--b-muted);
+}
+.b-border {
+  border-color: var(--b-border);
+}
+
+/* Smooth scrollbars on admin */
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
