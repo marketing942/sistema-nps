@@ -49,11 +49,18 @@ export function npsLabel(value: number | null): {
 } {
   if (value === null || Number.isNaN(value))
     return { label: "Sem dados", tone: "empty" };
-  if (value >= 75) return { label: "Excelência", tone: "good" };
-  if (value >= 50) return { label: "Qualidade", tone: "good" };
-  if (value >= 0) return { label: "Aperfeiçoamento", tone: "neutral" };
-  return { label: "Crítico", tone: "bad" };
+  if (value >= 75) return { label: "Zona de Excelência", tone: "good" };
+  if (value >= 50) return { label: "Zona de Qualidade", tone: "good" };
+  if (value >= 0) return { label: "Zona de Aperfeiçoamento", tone: "neutral" };
+  return { label: "Zona Crítica", tone: "bad" };
 }
+
+export const NPS_ZONES = [
+  { min: -100, max: 0, label: "Zona Crítica", color: "#ef4444" },
+  { min: 0, max: 50, label: "Zona de Aperfeiçoamento", color: "#f59e0b" },
+  { min: 50, max: 75, label: "Zona de Qualidade", color: "#22c55e" },
+  { min: 75, max: 100, label: "Zona de Excelência", color: "#059669" },
+] as const;
 
 const RISK_KEYWORDS = [
   "cancelar",

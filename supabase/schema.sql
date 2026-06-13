@@ -347,18 +347,41 @@ drop policy if exists "public_read_products" on public.products;
 create policy "public_read_products" on public.products
   for select to anon using (true);
 
--- Submissão pública: anon pode INSERIR respostas e respostas-individuais
-drop policy if exists "public_insert_responses" on public.survey_responses;
-create policy "public_insert_responses" on public.survey_responses
-  for insert to anon with check (
-    exists (select 1 from public.surveys s
-            where s.id = survey_id and s.is_active = true)
-  );
+-- Submissão pública: feita exclusivamente pela API route
+-- /api/survey/submit usando SUPABASE_SERVICE_ROLE_KEY.
+-- Anon NÃO pode inserir/atualizar/remover respostas.
+revoke insert, update, delete on public.survey_responses from anon;
+revoke insert, update, delete on public.survey_answers from anon;
 
-drop policy if exists "public_insert_answers" on public.survey_answers;
-create policy "public_insert_answers" on public.survey_answers
-  for insert to anon with check (
-    exists (select 1 from public.survey_responses r
-            join public.surveys s on s.id = r.survey_id
-            where r.id = response_id and s.is_active = true)
-  );
+-- Defesa em profundidade — anon não acessa agregados/análises.
+revoke select on public.v_answers_classified from anon;
+revoke select on public.v_survey_metrics from anon;
+revoke execute on function public.fn_metrics_overview(uuid, uuid, timestamptz, timestamptz) from anon;
+grant select on public.v_answers_classified to authenticated;
+grant select on public.v_survey_metrics to authenticated;
+grant execute on function public.fn_metrics_overview(uuid, uuid, timestamptz, timestamptz) to authenticated;
+
+-- CHECK constraints adicionais
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'survey_answers_numeric_range') then
+    alter table public.survey_answers
+      add constraint survey_answers_numeric_range
+      check (numeric_value is null or (numeric_value >= 0 and numeric_value <= 10));
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'survey_answers_text_length') then
+    alter table public.survey_answers
+      add constraint survey_answers_text_length
+      check (text_value is null or char_length(text_value) <= 5000);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'survey_responses_email_length') then
+    alter table public.survey_responses
+      add constraint survey_responses_email_length
+      check (respondent_email is null or char_length(respondent_email) <= 320);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'survey_responses_name_length') then
+    alter table public.survey_responses
+      add constraint survey_responses_name_length
+      check (respondent_name is null or char_length(respondent_name) <= 300);
+  end if;
+end $$;

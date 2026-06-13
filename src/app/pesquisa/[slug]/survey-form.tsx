@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import type { SurveyQuestion } from "@/lib/types";
 import { Star } from "lucide-react";
 
@@ -79,53 +78,44 @@ export default function SurveyForm({
     }
 
     startTransition(async () => {
-      const supabase = createClient();
-      const { data: resp, error: rErr } = await supabase
-        .from("survey_responses")
-        .insert({
-          survey_id: surveyId,
-          business_unit_id: businessUnitId,
-          product_id: productId,
-          respondent_name: respondentName || null,
-          respondent_email: respondentEmail || null,
-          respondent_phone: respondentPhone || null,
-          source: "public_link",
-          user_agent:
-            typeof navigator !== "undefined" ? navigator.userAgent : null,
-        })
-        .select("id")
-        .single();
+      const payload = {
+        surveySlug,
+        respondent: {
+          name: respondentName,
+          email: respondentEmail,
+          phone: respondentPhone,
+        },
+        answers: questions
+          .map((q) => {
+            const a = answers[q.id];
+            if (!a) return null;
+            return {
+              questionId: q.id,
+              numeric_value: a.numeric_value ?? null,
+              text_value: a.text_value ?? null,
+              choice_value: a.choice_value ?? null,
+            };
+          })
+          .filter(Boolean),
+      };
 
-      if (rErr || !resp) {
-        setError("Não foi possível enviar sua resposta. Tente novamente.");
-        return;
-      }
-
-      const rows = questions
-        .map((q) => {
-          const a = answers[q.id];
-          if (!a) return null;
-          return {
-            response_id: resp.id,
-            question_id: q.id,
-            numeric_value: a.numeric_value ?? null,
-            text_value: a.text_value ?? null,
-            choice_value: a.choice_value ?? null,
-          };
-        })
-        .filter(Boolean);
-
-      if (rows.length > 0) {
-        const { error: aErr } = await supabase
-          .from("survey_answers")
-          .insert(rows as any);
-        if (aErr) {
-          setError("Resposta parcialmente salva. Tente novamente.");
+      try {
+        const res = await fetch("/api/survey/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setError(
+            data?.error ?? "Não foi possível enviar sua resposta. Tente novamente."
+          );
           return;
         }
+        router.push(`/pesquisa/${surveySlug}/obrigado`);
+      } catch {
+        setError("Falha de rede. Verifique sua conexão e tente novamente.");
       }
-
-      router.push(`/pesquisa/${surveySlug}/obrigado`);
     });
   }
 

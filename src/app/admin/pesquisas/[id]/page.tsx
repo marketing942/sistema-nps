@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/page-header";
 import KpiCard from "@/components/ui/kpi-card";
 import DistributionBars from "@/components/charts/distribution-bars";
+import NpsGauge from "@/components/charts/nps-gauge";
 import CopyLinkButton from "../copy-link-button";
 import { ExternalLink, Pencil } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
@@ -132,37 +133,40 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
 
       {tab === "overview" ? (
         <>
-          <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <KpiCard
-              label="NPS"
-              value={metrics?.nps_score ?? null}
-              hint={`${metrics?.total_responses ?? 0} respostas`}
-              tone="good"
-              big
-            />
-            <KpiCard
-              label="CSAT (%)"
-              value={
-                metrics?.csat_score !== null && metrics?.csat_score !== undefined
-                  ? `${metrics.csat_score}%`
-                  : null
-              }
-              tone="good"
-            />
-            <KpiCard
-              label="Estrelas (média)"
-              value={
-                metrics?.average_stars
-                  ? Number(metrics.average_stars).toFixed(2)
-                  : null
-              }
-              tone="neutral"
-            />
-            <KpiCard
-              label="Detratores"
-              value={metrics?.detractors_count ?? 0}
-              tone="bad"
-            />
+          <section className="grid gap-4 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <NpsGauge
+                value={metrics?.nps_score ?? null}
+                title="Pontuação NPS desta pesquisa"
+                totalResponses={Number(metrics?.total_responses ?? 0)}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              <KpiCard
+                label="CSAT (%)"
+                value={
+                  metrics?.csat_score !== null &&
+                  metrics?.csat_score !== undefined
+                    ? `${metrics.csat_score}%`
+                    : null
+                }
+                tone="good"
+              />
+              <KpiCard
+                label="Estrelas (média)"
+                value={
+                  metrics?.average_stars
+                    ? Number(metrics.average_stars).toFixed(2)
+                    : null
+                }
+                tone="neutral"
+              />
+              <KpiCard
+                label="Detratores"
+                value={metrics?.detractors_count ?? 0}
+                tone="bad"
+              />
+            </div>
           </section>
 
           <section className="mt-6 grid gap-4 lg:grid-cols-2">

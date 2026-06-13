@@ -3,6 +3,7 @@ import KpiCard from "@/components/ui/kpi-card";
 import PageHeader from "@/components/ui/page-header";
 import NpsEvolution from "@/components/charts/nps-evolution";
 import DistributionBars from "@/components/charts/distribution-bars";
+import NpsGauge from "@/components/charts/nps-gauge";
 import { npsLabel, detectRisk } from "@/lib/nps";
 import DashboardFilters from "./filters";
 import Link from "next/link";
@@ -150,43 +151,43 @@ export default async function DashboardPage({
         }}
       />
 
-      <section className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KpiCard
-          label="NPS geral"
-          value={npsValue !== null ? npsValue : null}
-          hint={tone.label}
-          tone={
-            tone.tone === "good"
-              ? "good"
-              : tone.tone === "bad"
-                ? "bad"
-                : tone.tone === "neutral"
-                  ? "neutral"
-                  : "default"
-          }
-          big
-        />
-        <KpiCard
-          label="CSAT geral (%)"
-          value={m.csat_score !== null && m.csat_score !== undefined ? `${m.csat_score}%` : null}
-          hint={
-            m.csat_avg
-              ? `Média ${Number(m.csat_avg).toFixed(2)} / 5`
-              : "Sem respostas CSAT"
-          }
-          tone="good"
-        />
-        <KpiCard
-          label="Média de estrelas"
-          value={m.average_stars ? Number(m.average_stars).toFixed(2) : null}
-          hint="Escala 1 a 5"
-          tone="neutral"
-        />
-        <KpiCard
-          label="Total de respostas"
-          value={m.total_responses ?? 0}
-          hint="No período selecionado"
-        />
+      <section className="mt-6 grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <NpsGauge
+            value={npsValue}
+            title="Pontuação NPS · zonas de classificação"
+            totalResponses={Number(m.total_responses ?? 0)}
+          />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <KpiCard
+            label="CSAT geral (%)"
+            value={
+              m.csat_score !== null && m.csat_score !== undefined
+                ? `${m.csat_score}%`
+                : null
+            }
+            hint={
+              m.csat_avg
+                ? `Média ${Number(m.csat_avg).toFixed(2)} / 5`
+                : "Sem respostas CSAT"
+            }
+            tone="good"
+          />
+          <KpiCard
+            label="Média de estrelas"
+            value={
+              m.average_stars ? Number(m.average_stars).toFixed(2) : null
+            }
+            hint="Escala 1 a 5"
+            tone="neutral"
+          />
+          <KpiCard
+            label="Total de respostas"
+            value={m.total_responses ?? 0}
+            hint="No período selecionado"
+          />
+        </div>
       </section>
 
       <section className="mt-6 grid gap-4 md:grid-cols-3">

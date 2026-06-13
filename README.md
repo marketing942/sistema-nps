@@ -26,10 +26,11 @@ Copie `.env.example` para `.env.local` e preencha:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...        # OBRIGATÓRIO
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` é opcional — só será necessário se você quiser estender o sistema com tarefas administrativas server-side.
+> **A `SUPABASE_SERVICE_ROLE_KEY` é obrigatória.** Ela é usada **somente no servidor** (`/api/survey/submit`) para validar e gravar as respostas públicas — o anon não tem mais permissão de INSERT nas tabelas. Nunca exponha essa chave no frontend nem versionar em arquivos.
 
 ## 3. Rodando localmente
 
@@ -102,8 +103,27 @@ A página `/admin/comentarios` destaca:
 4. Copia o link público da pesquisa e envia para os clientes/alunos/pais.
 5. Acompanha respostas, NPS, CSAT e comentários no `/admin/dashboard`.
 
-## 10. Próximos passos sugeridos
+## 10. Segurança
 
-- Adicionar classificação de sentimentos via IA na área de comentários.
-- Criar alertas por e-mail/WhatsApp quando um detrator for registrado.
+Camadas aplicadas:
+
+- **Insert público bloqueado no RLS** — `anon` não pode inserir/alterar/remover respostas. Todo envio passa pela API server-side `/api/survey/submit`, que usa `SUPABASE_SERVICE_ROLE_KEY` após validar tudo.
+- **Validação no servidor** — e-mail, telefone, slug (regex), tamanhos máximos, perguntas obrigatórias, ranges (NPS 0–10, CSAT/estrelas 1–5), opções válidas em múltipla escolha, e bloqueio de `question_id` que não pertence à pesquisa.
+- **`business_unit_id` / `product_id` derivados da pesquisa** — cliente não pode poluir métricas de outra unidade.
+- **Rate limit por IP** — 10 envios / 10 min / IP no `/api/survey/submit` (em memória; promover para Upstash/Redis em escala).
+- **CHECK constraints** no banco como rede de segurança (ranges, tamanhos).
+- **Views/RPC fechadas para anon** — `v_answers_classified`, `v_survey_metrics` e `fn_metrics_overview` só são acessíveis a `authenticated`.
+- **CSV formula injection** — campos iniciados em `=`, `+`, `-`, `@`, `\t`, `\r` são prefixados com `'`.
+- **UUID validation** nos parâmetros do export para defesa em profundidade.
+- **Security headers**: `X-Content-Type-Options`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`, `poweredByHeader: false`.
+- **Auth Supabase com cookies HttpOnly** gerenciados pelo `@supabase/ssr`, com refresh server-side via middleware.
+- **Senhas dos admins** ficam no Supabase Auth (bcrypt-like); o sistema não armazena credenciais.
+
+> Para repositórios já em produção, **aplique `supabase/migrations/002_security_hardening.sql`** depois do deploy do novo código que envia via `/api/survey/submit`.
+
+## 11. Próximos passos sugeridos
+
+- Classificação de sentimentos por IA na área de comentários.
+- Alertas por e-mail/WhatsApp ao registrar um detrator ou comentário de risco.
 - Cadastro de usuários administradores diretamente pelo painel.
+- Rate limit distribuído com Upstash/Redis ao escalar.

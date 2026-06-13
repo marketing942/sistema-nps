@@ -13,8 +13,11 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const bu = searchParams.get("bu");
-  const surveyId = searchParams.get("survey");
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const buRaw = searchParams.get("bu");
+  const surveyRaw = searchParams.get("survey");
+  const bu = buRaw && UUID_RE.test(buRaw) ? buRaw : null;
+  const surveyId = surveyRaw && UUID_RE.test(surveyRaw) ? surveyRaw : null;
 
   let respQ = supabase
     .from("survey_responses")
@@ -141,7 +144,11 @@ export async function GET(request: Request) {
 
 function csv(v: any): string {
   if (v === null || v === undefined) return "";
-  const s = String(v).replace(/"/g, '""');
+  let s = String(v);
+  // Prevent CSV/spreadsheet formula injection (CWE-1236):
+  // valores começando com =, +, -, @, tab ou CR são prefixados com '
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  s = s.replace(/"/g, '""');
   if (s.includes(",") || s.includes("\n") || s.includes('"'))
     return `"${s}"`;
   return s;
