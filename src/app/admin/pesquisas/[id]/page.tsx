@@ -8,6 +8,7 @@ import CopyLinkButton from "../copy-link-button";
 import { ExternalLink, Pencil } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import SurveyEditorPanel from "./editor-panel";
+import DeleteButton from "@/components/admin/delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -87,7 +88,7 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
         title={survey.name}
         description={`${bu?.name ?? ""}${product?.name ? " · " + product.name : ""}`}
         action={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <CopyLinkButton slug={survey.slug} variant="full" />
             <Link
               href={`/pesquisa/${survey.slug}`}
@@ -96,6 +97,14 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
             >
               <ExternalLink className="h-3.5 w-3.5" /> Abrir pesquisa
             </Link>
+            <DeleteButton
+              table="surveys"
+              id={survey.id}
+              label="Excluir pesquisa"
+              variant="full"
+              redirectTo="/admin/pesquisas"
+              confirmText={`Excluir a pesquisa "${survey.name}"? Todas as perguntas e respostas serão removidas permanentemente.`}
+            />
           </div>
         }
       />
@@ -204,6 +213,7 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
                 <th className="px-4 py-3 text-left">Respondente</th>
                 <th className="px-4 py-3 text-left">Contato</th>
                 <th className="px-4 py-3 text-left">Tipo</th>
+                <th className="px-4 py-3 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-800 bg-ink-900/40">
@@ -223,12 +233,22 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
                   <td className="px-4 py-3 text-ink-400">
                     {r.respondent_type ?? "—"}
                   </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex justify-end">
+                      <DeleteButton
+                        table="survey_responses"
+                        id={r.id}
+                        label="Excluir resposta"
+                        confirmText="Excluir esta resposta? Esta ação não pode ser desfeita."
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))}
               {(!recentResponses || recentResponses.length === 0) && (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-4 py-10 text-center text-ink-400"
                   >
                     Nenhuma resposta ainda. Compartilhe o link público.

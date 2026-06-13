@@ -5,6 +5,7 @@ import EmptyState from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/utils";
 import { Plus, ExternalLink } from "lucide-react";
 import CopyLinkButton from "./copy-link-button";
+import DeleteButton from "@/components/admin/delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -110,6 +111,12 @@ export default async function PesquisasPage() {
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </Link>
+                        <DeleteButton
+                          table="surveys"
+                          id={s.id}
+                          label="Excluir pesquisa"
+                          confirmText={`Excluir a pesquisa "${s.name}"? Todas as perguntas e respostas serão removidas permanentemente.`}
+                        />
                       </div>
                     </td>
                   </tr>

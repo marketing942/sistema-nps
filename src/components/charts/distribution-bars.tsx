@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   Cell,
 } from "recharts";
+import { useChartColors } from "@/lib/use-theme";
 
 export interface DistItem {
   label: string;
@@ -24,6 +25,7 @@ export default function DistributionBars({
   data: DistItem[];
   title?: string;
 }) {
+  const c = useChartColors();
   return (
     <div className="rounded-xl border border-ink-800 bg-ink-900 p-5">
       {title ? (
@@ -34,15 +36,15 @@ export default function DistributionBars({
       <div className="h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid stroke="#1f1f29" vertical={false} />
+            <CartesianGrid stroke={c.grid} vertical={false} />
             <XAxis
               dataKey="label"
-              stroke="#6b6b7f"
+              stroke={c.axis}
               fontSize={11}
               tickLine={false}
             />
             <YAxis
-              stroke="#6b6b7f"
+              stroke={c.axis}
               fontSize={11}
               tickLine={false}
               axisLine={false}
@@ -50,15 +52,16 @@ export default function DistributionBars({
             />
             <Tooltip
               contentStyle={{
-                background: "#101015",
-                border: "1px solid #1f1f29",
+                background: c.tooltipBg,
+                border: `1px solid ${c.tooltipBorder}`,
                 fontSize: 12,
+                color: c.tooltipText,
               }}
-              cursor={{ fill: "rgba(255,255,255,0.03)" }}
+              cursor={{ fill: "rgba(120,120,140,0.06)" }}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {data.map((d, i) => (
-                <Cell key={i} fill={d.color ?? "#00E63C"} />
+                <Cell key={i} fill={d.color ?? c.primary} />
               ))}
             </Bar>
           </BarChart>

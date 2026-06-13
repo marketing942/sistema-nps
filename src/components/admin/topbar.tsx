@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import ThemeToggle from "./theme-toggle";
 
 export default function TopBar({ email }: { email: string }) {
   const router = useRouter();
@@ -17,13 +18,14 @@ export default function TopBar({ email }: { email: string }) {
       <div className="text-xs uppercase tracking-[0.25em] text-ink-400">
         Painel administrativo
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
           <p className="text-sm font-semibold">{email}</p>
           <p className="text-[10px] uppercase tracking-widest text-ink-400">
             Administrador
           </p>
         </div>
+        <ThemeToggle />
         <button
           onClick={logout}
           className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green"

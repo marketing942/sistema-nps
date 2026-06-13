@@ -7,6 +7,18 @@ export const metadata: Metadata = {
     "Sistema interno de NPS e CSAT do CPPEM Concursos e do Colégio CPPEM.",
 };
 
+const themeScript = `
+(function() {
+  try {
+    var t = localStorage.getItem('cppem-theme');
+    if (!t) {
+      t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    if (t === 'light') document.documentElement.classList.add('light');
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: {
@@ -15,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

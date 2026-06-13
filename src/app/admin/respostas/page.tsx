@@ -4,6 +4,7 @@ import EmptyState from "@/components/ui/empty-state";
 import { formatDateTime } from "@/lib/utils";
 import { Download } from "lucide-react";
 import Link from "next/link";
+import DeleteButton from "@/components/admin/delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,7 @@ export default async function RespostasPage({
                 <th className="px-4 py-3 text-left">Unidade · Produto</th>
                 <th className="px-4 py-3 text-left">Respondente</th>
                 <th className="px-4 py-3 text-left">Contato</th>
+                <th className="px-4 py-3 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-800 bg-ink-900/40">
@@ -149,6 +151,16 @@ export default async function RespostasPage({
                     <td className="px-4 py-3 text-ink-400">
                       <p>{r.respondent_email ?? "—"}</p>
                       <p className="text-xs">{r.respondent_phone ?? ""}</p>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end">
+                        <DeleteButton
+                          table="survey_responses"
+                          id={r.id}
+                          label="Excluir resposta"
+                          confirmText="Excluir esta resposta? Esta ação não pode ser desfeita."
+                        />
+                      </div>
                     </td>
                   </tr>
                 );

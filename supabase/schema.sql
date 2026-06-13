@@ -321,11 +321,11 @@ create policy "admin_all_questions" on public.survey_questions
 
 drop policy if exists "admin_all_responses" on public.survey_responses;
 create policy "admin_all_responses" on public.survey_responses
-  for select to authenticated using (true);
+  for all to authenticated using (true) with check (true);
 
 drop policy if exists "admin_all_answers" on public.survey_answers;
 create policy "admin_all_answers" on public.survey_answers
-  for select to authenticated using (true);
+  for all to authenticated using (true) with check (true);
 
 -- Acesso público (anon) — leitura mínima para renderizar pesquisa
 drop policy if exists "public_read_active_surveys" on public.surveys;

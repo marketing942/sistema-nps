@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { useChartColors } from "@/lib/use-theme";
 
 interface Point {
   label: string;
@@ -23,6 +24,7 @@ export default function NpsEvolution({
   data: Point[];
   title?: string;
 }) {
+  const c = useChartColors();
   return (
     <div className="rounded-xl border border-ink-800 bg-ink-900 p-5">
       {title ? (
@@ -33,15 +35,15 @@ export default function NpsEvolution({
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid stroke="#1f1f29" vertical={false} />
+            <CartesianGrid stroke={c.grid} vertical={false} />
             <XAxis
               dataKey="label"
-              stroke="#6b6b7f"
+              stroke={c.axis}
               fontSize={11}
               tickLine={false}
             />
             <YAxis
-              stroke="#6b6b7f"
+              stroke={c.axis}
               fontSize={11}
               tickLine={false}
               axisLine={false}
@@ -49,27 +51,28 @@ export default function NpsEvolution({
             />
             <Tooltip
               contentStyle={{
-                background: "#101015",
-                border: "1px solid #1f1f29",
+                background: c.tooltipBg,
+                border: `1px solid ${c.tooltipBorder}`,
                 fontSize: 12,
+                color: c.tooltipText,
               }}
-              labelStyle={{ color: "#a1a1b3" }}
+              labelStyle={{ color: c.tooltipLabel }}
             />
             <Line
               type="monotone"
               dataKey="nps"
-              stroke="#00E63C"
+              stroke={c.primary}
               strokeWidth={2.5}
-              dot={{ r: 3, fill: "#00E63C" }}
+              dot={{ r: 3, fill: c.primary }}
               name="NPS"
             />
             {data.some((d) => d.csat !== undefined) ? (
               <Line
                 type="monotone"
                 dataKey="csat"
-                stroke="#C9A227"
+                stroke={c.gold}
                 strokeWidth={2}
-                dot={{ r: 3, fill: "#C9A227" }}
+                dot={{ r: 3, fill: c.gold }}
                 name="CSAT"
               />
             ) : null}

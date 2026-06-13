@@ -42,6 +42,14 @@ export default function SurveyForm({
   }
 
   function validate(): string | null {
+    if (!respondentName.trim())
+      return "Por favor, informe seu nome para enviar a resposta.";
+    if (!respondentEmail.trim())
+      return "Por favor, informe seu e-mail para enviar a resposta.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(respondentEmail.trim()))
+      return "O e-mail informado parece inválido.";
+    if (!respondentPhone.trim())
+      return "Por favor, informe seu WhatsApp/telefone para enviar a resposta.";
     for (const q of questions) {
       if (!q.is_required) continue;
       const a = answers[q.id];
@@ -143,30 +151,37 @@ export default function SurveyForm({
       ))}
 
       <div className="b-card-surface rounded-md p-5 sm:p-6">
-        <p className="b-primary-text mb-3 text-[11px] font-bold uppercase tracking-[0.18em]">
-          Identificação (opcional)
+        <p className="b-primary-text mb-1 text-[11px] font-bold uppercase tracking-[0.18em]">
+          Identificação <span className="opacity-70">· obrigatória</span>
+        </p>
+        <p className="b-muted mb-4 text-xs">
+          Precisamos saber quem está respondendo para conseguir conversar com
+          você caso necessário.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <input
             type="text"
-            placeholder="Seu nome"
+            required
+            placeholder="Seu nome completo *"
             value={respondentName}
             onChange={(e) => setRespondentName(e.target.value)}
-            className="b-border rounded-md border bg-transparent px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-current"
+            className="b-border rounded-md border bg-transparent px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-current sm:col-span-2"
           />
           <input
             type="email"
-            placeholder="E-mail"
+            required
+            placeholder="E-mail *"
             value={respondentEmail}
             onChange={(e) => setRespondentEmail(e.target.value)}
             className="b-border rounded-md border bg-transparent px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-current"
           />
           <input
             type="tel"
-            placeholder="WhatsApp / Telefone"
+            required
+            placeholder="WhatsApp / Telefone *"
             value={respondentPhone}
             onChange={(e) => setRespondentPhone(e.target.value)}
-            className="b-border rounded-md border bg-transparent px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-current sm:col-span-2"
+            className="b-border rounded-md border bg-transparent px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-current"
           />
         </div>
       </div>
