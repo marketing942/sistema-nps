@@ -35,13 +35,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-ink-950 p-6">
-      <div
-        className="w-full max-w-md rounded-xl border border-ink-700 bg-ink-900 p-8 shadow-card"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(0,230,60,0.05), transparent), #101015",
-        }}
-      >
+      <div className="w-full max-w-md rounded-xl border border-ink-700 bg-ink-900 p-8 shadow-card">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid h-10 w-10 place-items-center rounded-md bg-cppem-green text-cppem-black">
             <LogIn className="h-5 w-5" />

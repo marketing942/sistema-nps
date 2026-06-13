@@ -190,7 +190,7 @@ function FormSelect({
       <select
         name={name}
         defaultValue={value}
-        className="min-w-[200px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-white outline-none focus:border-cppem-green"
+        className="min-w-[200px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-green"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

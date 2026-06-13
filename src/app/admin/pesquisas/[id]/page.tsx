@@ -278,7 +278,7 @@ function TabLink({
       className={`relative px-4 py-3 text-xs uppercase tracking-widest transition ${
         active
           ? "text-cppem-green"
-          : "text-ink-400 hover:text-white"
+          : "text-ink-400 hover:text-ink-100"
       }`}
     >
       {children}

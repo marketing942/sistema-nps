@@ -51,7 +51,7 @@ export default function Sidebar() {
                 "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition",
                 active
                   ? "bg-cppem-green/10 text-cppem-green"
-                  : "text-ink-300 hover:bg-ink-800 hover:text-white"
+                  : "text-ink-300 hover:bg-ink-800 hover:text-ink-100"
               )}
             >
               <Icon className="h-4 w-4" />

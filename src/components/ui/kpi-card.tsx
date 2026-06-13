@@ -19,7 +19,7 @@ export default function KpiCard({
     good: "text-emerald-400",
     bad: "text-rose-400",
     neutral: "text-amber-400",
-    default: "text-white",
+    default: "text-ink-100",
   }[tone];
 
   return (
