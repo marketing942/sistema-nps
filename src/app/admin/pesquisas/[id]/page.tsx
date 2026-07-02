@@ -10,6 +10,7 @@ import { ExternalLink, Pencil } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import SurveyEditorPanel from "./editor-panel";
 import DeleteButton from "@/components/admin/delete-button";
+import ResponsesList from "./responses-list";
 
 export const dynamic = "force-dynamic";
 
@@ -61,11 +62,15 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
   const { data: recentResponses } = await supabase
     .from("survey_responses")
     .select(
-      "id, submitted_at, respondent_name, respondent_email, respondent_type"
+      `id, submitted_at, respondent_name, respondent_email, respondent_phone, respondent_type,
+       answers:survey_answers(
+         id, numeric_value, text_value, choice_value,
+         question:survey_questions(id, question_text, question_type, order_index, options)
+       )`
     )
     .eq("survey_id", survey.id)
     .order("submitted_at", { ascending: false })
-    .limit(10);
+    .limit(200);
 
   const tab = searchParams.tab ?? "overview";
   const bu = Array.isArray(survey.business_unit)
@@ -209,59 +214,25 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
       ) : null}
 
       {tab === "responses" ? (
-        <div className="overflow-hidden rounded-xl border border-ink-800">
-          <table className="w-full text-sm">
-            <thead className="bg-ink-900 text-[10px] uppercase tracking-widest text-ink-400">
-              <tr>
-                <th className="px-4 py-3 text-left">Data</th>
-                <th className="px-4 py-3 text-left">Respondente</th>
-                <th className="px-4 py-3 text-left">Contato</th>
-                <th className="px-4 py-3 text-left">Tipo</th>
-                <th className="px-4 py-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink-800 bg-ink-900/40">
-              {(recentResponses ?? []).map((r: any) => (
-                <tr key={r.id}>
-                  <td className="px-4 py-3 text-ink-300">
-                    {formatDateTime(r.submitted_at)}
-                  </td>
-                  <td className="px-4 py-3">
-                    {r.respondent_name || (
-                      <span className="text-ink-400">Anônimo</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-ink-400">
-                    {r.respondent_email ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-ink-400">
-                    {r.respondent_type ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end">
-                      <DeleteButton
-                        table="survey_responses"
-                        id={r.id}
-                        label="Excluir resposta"
-                        confirmText="Excluir esta resposta? Esta ação não pode ser desfeita."
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {(!recentResponses || recentResponses.length === 0) && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-4 py-10 text-center text-ink-400"
-                  >
-                    Nenhuma resposta ainda. Compartilhe o link público.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <ResponsesList
+          responses={((recentResponses ?? []) as any[]).map((r) => ({
+            id: r.id,
+            submitted_at: r.submitted_at,
+            respondent_name: r.respondent_name,
+            respondent_email: r.respondent_email,
+            respondent_phone: r.respondent_phone,
+            respondent_type: r.respondent_type,
+            answers: (r.answers ?? []).map((a: any) => ({
+              id: a.id,
+              numeric_value: a.numeric_value,
+              text_value: a.text_value,
+              choice_value: a.choice_value,
+              question: Array.isArray(a.question)
+                ? a.question[0]
+                : a.question,
+            })),
+          }))}
+        />
       ) : null}
     </>
   );
