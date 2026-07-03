@@ -258,6 +258,8 @@ left join resp_agg  on resp_agg.survey_id  = s.id;
 -- ---------------------------------------------------------------------
 -- 11. FUNÇÃO: métricas filtradas (por respondente)
 -- ---------------------------------------------------------------------
+drop function if exists public.fn_metrics_overview(uuid, uuid, timestamptz, timestamptz);
+
 create or replace function public.fn_metrics_overview(
   p_business_unit uuid default null,
   p_product      uuid default null,

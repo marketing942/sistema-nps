@@ -77,6 +77,10 @@ where q.question_type = 'stars_1_5'
 order by r.id, q.order_index asc, a.created_at asc;
 
 -- 2. Função de métricas do dashboard, agora contando respondentes
+-- (drop antes porque o tipo de retorno mudou — novas colunas
+-- nps_total, csat_total e stars_total)
+drop function if exists public.fn_metrics_overview(uuid, uuid, timestamptz, timestamptz);
+
 create or replace function public.fn_metrics_overview(
   p_business_unit uuid default null,
   p_product      uuid default null,
