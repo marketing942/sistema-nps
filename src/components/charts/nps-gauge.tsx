@@ -83,7 +83,7 @@ export default function NpsGauge({
         </p>
         {typeof totalResponses === "number" ? (
           <span className="text-[10px] uppercase tracking-widest text-ink-400">
-            {totalResponses} respostas
+            {totalResponses} respondentes NPS
           </span>
         ) : null}
       </div>

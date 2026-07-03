@@ -45,16 +45,15 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
     .eq("survey_id", survey.id)
     .maybeSingle();
 
-  const { data: npsAnswers } = await supabase
-    .from("v_answers_classified")
-    .select("numeric_value, classification")
-    .eq("survey_id", survey.id)
-    .eq("question_type", "nps_0_10");
+  const { data: npsResponses } = await supabase
+    .from("v_response_nps")
+    .select("nps_score, classification")
+    .eq("survey_id", survey.id);
 
   const distribution = Array.from({ length: 11 }, (_, i) => ({
     label: String(i),
-    value: (npsAnswers ?? []).filter(
-      (a: any) => Math.round(Number(a.numeric_value)) === i
+    value: (npsResponses ?? []).filter(
+      (a: any) => Math.round(Number(a.nps_score)) === i
     ).length,
     color: i >= 9 ? "#10b981" : i >= 7 ? "#f59e0b" : "#ef4444",
   }));
@@ -143,7 +142,7 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
               <NpsGauge
                 value={metrics?.nps_score ?? null}
                 title="Pontuação NPS desta pesquisa"
-                totalResponses={Number(metrics?.total_responses ?? 0)}
+                totalResponses={Number(metrics?.nps_total ?? 0)}
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">

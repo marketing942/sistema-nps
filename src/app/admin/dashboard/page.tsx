@@ -52,37 +52,36 @@ export default async function DashboardPage({
   });
   const m = (overview as any[])?.[0] ?? {};
 
-  // NPS distribution 0-10 (filtered)
-  const classifiedQuery = supabase
-    .from("v_answers_classified")
+  // NPS por respondente (1 voz por respondente)
+  let npsQuery = supabase
+    .from("v_response_nps")
     .select(
-      "numeric_value, question_type, classification, business_unit_id, product_id, submitted_at"
-    )
-    .eq("question_type", "nps_0_10");
-  if (buId) classifiedQuery.eq("business_unit_id", buId);
-  if (productId) classifiedQuery.eq("product_id", productId);
-  if (fromIso) classifiedQuery.gte("submitted_at", fromIso);
-  if (toIso) classifiedQuery.lte("submitted_at", toIso);
-  const { data: npsAnswers } = await classifiedQuery;
+      "response_id, nps_score, classification, business_unit_id, product_id, submitted_at"
+    );
+  if (buId) npsQuery = npsQuery.eq("business_unit_id", buId);
+  if (productId) npsQuery = npsQuery.eq("product_id", productId);
+  if (fromIso) npsQuery = npsQuery.gte("submitted_at", fromIso);
+  if (toIso) npsQuery = npsQuery.lte("submitted_at", toIso);
+  const { data: npsResponses } = await npsQuery;
 
   const distribution = Array.from({ length: 11 }, (_, i) => ({
     label: String(i),
-    value: (npsAnswers ?? []).filter(
-      (a: any) => Math.round(Number(a.numeric_value)) === i
+    value: (npsResponses ?? []).filter(
+      (a: any) => Math.round(Number(a.nps_score)) === i
     ).length,
-    color:
-      i >= 9 ? "#10b981" : i >= 7 ? "#f59e0b" : "#ef4444",
+    color: i >= 9 ? "#10b981" : i >= 7 ? "#f59e0b" : "#ef4444",
   }));
 
-  // Evolution — monthly buckets last 6 months
+  // Evolution — monthly buckets last 6 months (por respondente)
   const months = lastNMonths(6);
   const evolution = months.map((mo) => {
-    const inMonth = (npsAnswers ?? []).filter((a: any) => {
+    const inMonth = (npsResponses ?? []).filter((a: any) => {
       const d = new Date(a.submitted_at);
       return d.getFullYear() === mo.year && d.getMonth() === mo.month;
     });
-    const promoters = inMonth.filter((a: any) => a.classification === "promoter")
-      .length;
+    const promoters = inMonth.filter(
+      (a: any) => a.classification === "promoter"
+    ).length;
     const detractors = inMonth.filter(
       (a: any) => a.classification === "detractor"
     ).length;
@@ -156,7 +155,7 @@ export default async function DashboardPage({
           <NpsGauge
             value={npsValue}
             title="Pontuação NPS · zonas de classificação"
-            totalResponses={Number(m.total_responses ?? 0)}
+            totalResponses={Number(m.nps_total ?? 0)}
           />
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
@@ -169,7 +168,7 @@ export default async function DashboardPage({
             }
             hint={
               m.csat_avg
-                ? `Média ${Number(m.csat_avg).toFixed(2)} / 5`
+                ? `Média ${Number(m.csat_avg).toFixed(2)} / 5 · ${m.csat_total ?? 0} respondentes`
                 : "Sem respostas CSAT"
             }
             tone="good"
@@ -179,13 +178,21 @@ export default async function DashboardPage({
             value={
               m.average_stars ? Number(m.average_stars).toFixed(2) : null
             }
-            hint="Escala 1 a 5"
+            hint={
+              m.stars_total
+                ? `Escala 1 a 5 · ${m.stars_total} respondentes`
+                : "Escala 1 a 5"
+            }
             tone="neutral"
           />
           <KpiCard
             label="Total de respostas"
             value={m.total_responses ?? 0}
-            hint="No período selecionado"
+            hint={
+              m.nps_total !== undefined && m.nps_total !== null
+                ? `${m.nps_total} responderam à pergunta NPS`
+                : "No período selecionado"
+            }
           />
         </div>
       </section>
@@ -194,16 +201,31 @@ export default async function DashboardPage({
         <KpiCard
           label="Promotores"
           value={m.promoters ?? 0}
+          hint={
+            m.nps_total
+              ? `de ${m.nps_total} respondentes NPS`
+              : undefined
+          }
           tone="good"
         />
         <KpiCard
           label="Neutros"
           value={m.neutrals ?? 0}
+          hint={
+            m.nps_total
+              ? `de ${m.nps_total} respondentes NPS`
+              : undefined
+          }
           tone="neutral"
         />
         <KpiCard
           label="Detratores"
           value={m.detractors ?? 0}
+          hint={
+            m.nps_total
+              ? `de ${m.nps_total} respondentes NPS`
+              : undefined
+          }
           tone="bad"
         />
       </section>
