@@ -203,7 +203,7 @@ order by r.id, q.order_index asc, a.created_at asc;
 -- ---------------------------------------------------------------------
 -- 10. VIEW agregada por pesquisa (por respondente)
 -- ---------------------------------------------------------------------
-drop view if exists public.v_survey_metrics;
+drop view if exists public.v_survey_metrics cascade;
 
 create view public.v_survey_metrics as
 with
