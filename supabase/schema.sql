@@ -203,7 +203,9 @@ order by r.id, q.order_index asc, a.created_at asc;
 -- ---------------------------------------------------------------------
 -- 10. VIEW agregada por pesquisa (por respondente)
 -- ---------------------------------------------------------------------
-create or replace view public.v_survey_metrics as
+drop view if exists public.v_survey_metrics;
+
+create view public.v_survey_metrics as
 with
 nps_agg as (
   select survey_id, business_unit_id, product_id,

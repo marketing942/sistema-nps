@@ -150,7 +150,11 @@ language sql stable as $$
 $$;
 
 -- 3. View v_survey_metrics reescrita
-create or replace view public.v_survey_metrics as
+-- (drop antes porque a lista de colunas mudou — nova coluna nps_total
+-- e ordem diferente)
+drop view if exists public.v_survey_metrics;
+
+create view public.v_survey_metrics as
 with
 nps_agg as (
   select
