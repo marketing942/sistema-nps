@@ -15,8 +15,15 @@
 --     responderam à pergunta NPS.
 -- =====================================================================
 
+-- 0. Reset de dependências (permite reaplicar a migration em qualquer estado)
+drop view     if exists public.v_survey_metrics cascade;
+drop view     if exists public.v_response_nps   cascade;
+drop view     if exists public.v_response_csat  cascade;
+drop view     if exists public.v_response_stars cascade;
+drop function if exists public.fn_metrics_overview(uuid, uuid, timestamptz, timestamptz);
+
 -- 1. Views por respondente
-create or replace view public.v_response_nps as
+create view public.v_response_nps as
 select distinct on (r.id)
   r.id                          as response_id,
   r.survey_id,
@@ -36,7 +43,7 @@ where q.question_type = 'nps_0_10'
   and a.numeric_value is not null
 order by r.id, q.order_index asc, a.created_at asc;
 
-create or replace view public.v_response_csat as
+create view public.v_response_csat as
 select distinct on (r.id)
   r.id                          as response_id,
   r.survey_id,
@@ -56,7 +63,7 @@ where q.question_type = 'csat_1_5'
   and a.numeric_value is not null
 order by r.id, q.order_index asc, a.created_at asc;
 
-create or replace view public.v_response_stars as
+create view public.v_response_stars as
 select distinct on (r.id)
   r.id                          as response_id,
   r.survey_id,
@@ -77,11 +84,7 @@ where q.question_type = 'stars_1_5'
 order by r.id, q.order_index asc, a.created_at asc;
 
 -- 2. Função de métricas do dashboard, agora contando respondentes
--- (drop antes porque o tipo de retorno mudou — novas colunas
--- nps_total, csat_total e stars_total)
-drop function if exists public.fn_metrics_overview(uuid, uuid, timestamptz, timestamptz);
-
-create or replace function public.fn_metrics_overview(
+create function public.fn_metrics_overview(
   p_business_unit uuid default null,
   p_product      uuid default null,
   p_from         timestamptz default null,
@@ -150,10 +153,6 @@ language sql stable as $$
 $$;
 
 -- 3. View v_survey_metrics reescrita
--- (drop antes porque a lista de colunas mudou — nova coluna nps_total
--- e ordem diferente)
-drop view if exists public.v_survey_metrics cascade;
-
 create view public.v_survey_metrics as
 with
 nps_agg as (
