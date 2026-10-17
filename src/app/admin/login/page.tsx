@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { LogIn } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -36,16 +35,13 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-ink-950 p-6">
       <div className="w-full max-w-md rounded-xl border border-ink-700 bg-ink-900 p-8 shadow-card">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-md bg-cppem-green text-cppem-black">
-            <LogIn className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-wide">Central CPPEM</h1>
-            <p className="text-xs text-ink-400">
-              Acesso restrito · NPS & CSAT
-            </p>
-          </div>
+        <div className="mb-6">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/logo-cppem.png" alt="CPPEM" className="h-12 w-auto" />
+          <h1 className="mt-4 font-display text-lg font-bold uppercase tracking-wide">
+            Central de Satisfação
+          </h1>
+          <p className="text-xs text-ink-400">Acesso restrito · NPS & CSAT</p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-3">
@@ -59,7 +55,7 @@ export default function AdminLoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
             />
           </label>
           <label className="block">
@@ -72,7 +68,7 @@ export default function AdminLoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
             />
           </label>
           {error ? (
@@ -83,7 +79,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full rounded-md bg-cppem-green py-2.5 text-sm font-bold uppercase tracking-widest text-cppem-black transition disabled:opacity-60"
+            className="w-full rounded-md bg-cppem-gold-solid py-2.5 text-sm font-bold uppercase tracking-widest text-cppem-bg transition disabled:opacity-60"
           >
             {isPending ? "Entrando..." : "Entrar"}
           </button>

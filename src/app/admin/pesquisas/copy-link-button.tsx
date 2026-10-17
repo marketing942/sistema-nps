@@ -22,7 +22,7 @@ export default function CopyLinkButton({
     return (
       <button
         onClick={copy}
-        className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+        className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
       >
         {copied ? (
           <>
@@ -40,10 +40,10 @@ export default function CopyLinkButton({
     <button
       onClick={copy}
       title={copied ? "Copiado!" : "Copiar link público"}
-      className="grid h-8 w-8 place-items-center rounded-md border border-ink-700 text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+      className="grid h-8 w-8 place-items-center rounded-md border border-ink-700 text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
     >
       {copied ? (
-        <Check className="h-3.5 w-3.5 text-cppem-green" />
+        <Check className="h-3.5 w-3.5 text-cppem-gold" />
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}

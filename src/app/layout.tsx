@@ -1,5 +1,26 @@
 import type { Metadata } from "next";
+import { Inter, Oxanium, Rajdhani, Cinzel, DM_Sans } from "next/font/google";
 import "./globals.css";
+
+// CPPEM — tipografia da nova identidade (igual à Central de Ajuda)
+const inter = Inter({ variable: "--font-body", subsets: ["latin"] });
+const oxanium = Oxanium({ variable: "--font-display", subsets: ["latin"] });
+const rajdhani = Rajdhani({
+  variable: "--font-ui",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+// Colégio CPPEM — tipografia original preservada
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "900"],
+});
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "CPPEM · Central de Satisfação",
@@ -25,19 +46,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${oxanium.variable} ${rajdhani.variable} ${cinzel.variable} ${dmSans.variable}`}
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;800;900&family=Cinzel:wght@400;600;700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body className="font-sans antialiased">{children}</body>
     </html>

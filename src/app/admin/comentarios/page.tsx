@@ -138,8 +138,8 @@ export default async function ComentariosPage({
                 href={mkLink({ ...searchParams, category: k })}
                 className={`rounded-full border px-3 py-1 text-[10px] uppercase tracking-widest ${
                   category === k
-                    ? "border-cppem-green text-cppem-green"
-                    : "border-ink-700 text-ink-300 hover:border-cppem-green/40"
+                    ? "border-cppem-gold text-cppem-gold"
+                    : "border-ink-700 text-ink-300 hover:border-cppem-gold/40"
                 }`}
               >
                 {label}
@@ -172,7 +172,7 @@ export default async function ComentariosPage({
             })),
           ]}
         />
-        <button className="rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green">
+        <button className="rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold">
           Aplicar
         </button>
       </form>
@@ -261,7 +261,7 @@ function Select({
       <select
         name={name}
         defaultValue={value}
-        className="min-w-[200px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-green"
+        className="min-w-[200px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-gold"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

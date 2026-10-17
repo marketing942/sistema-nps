@@ -263,7 +263,7 @@ export default function SurveyEditor({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex.: Satisfação Turma 2026.1"
-              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
             />
           </Field>
           <Field label="Descrição curta (opcional)">
@@ -272,7 +272,7 @@ export default function SurveyEditor({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Texto curto que aparecerá para o respondente."
-              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
             />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -283,7 +283,7 @@ export default function SurveyEditor({
                   setBuId(e.target.value);
                   setProductId("");
                 }}
-                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
               >
                 {businessUnits.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -296,7 +296,7 @@ export default function SurveyEditor({
               <select
                 value={productId}
                 onChange={(e) => setProductId(e.target.value)}
-                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
               >
                 <option value="">— sem produto —</option>
                 {filteredProducts.map((p) => (
@@ -314,14 +314,14 @@ export default function SurveyEditor({
                 value={audience}
                 onChange={(e) => setAudience(e.target.value)}
                 placeholder="Ex.: Aluno, Pai, Responsável, Mentorado"
-                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
               />
             </Field>
             <Field label="Tipo da pesquisa">
               <select
                 value={surveyType}
                 onChange={(e) => setSurveyType(e.target.value as SurveyType)}
-                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
               >
                 <option value="mixed">Mista</option>
                 <option value="nps">NPS</option>
@@ -336,7 +336,7 @@ export default function SurveyEditor({
                 type="date"
                 value={startsAt}
                 onChange={(e) => setStartsAt(e.target.value)}
-                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
               />
             </Field>
             <Field label="Fim (opcional)">
@@ -344,7 +344,7 @@ export default function SurveyEditor({
                 type="date"
                 value={endsAt}
                 onChange={(e) => setEndsAt(e.target.value)}
-                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
               />
             </Field>
           </div>
@@ -356,7 +356,7 @@ export default function SurveyEditor({
               placeholder={
                 name ? slugify(name) : "gerado-automaticamente"
               }
-              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm font-mono outline-none focus:border-cppem-green"
+              className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm font-mono outline-none focus:border-cppem-gold"
             />
           </Field>
         </Card>
@@ -367,7 +367,7 @@ export default function SurveyEditor({
             <button
               type="button"
               onClick={addQuestion}
-              className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest hover:border-cppem-green hover:text-cppem-green"
+              className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest hover:border-cppem-gold hover:text-cppem-gold"
             >
               <Plus className="h-3.5 w-3.5" /> Pergunta
             </button>
@@ -380,7 +380,7 @@ export default function SurveyEditor({
                 className="rounded-md border border-ink-800 bg-ink-950/40 p-4"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-cppem-green">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-cppem-gold">
                     Pergunta {i + 1}
                   </span>
                   <div className="flex items-center gap-1">
@@ -410,7 +410,7 @@ export default function SurveyEditor({
                     updateQ(i, { question_text: e.target.value })
                   }
                   placeholder="Texto da pergunta"
-                  className="mb-3 w-full rounded-md border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+                  className="mb-3 w-full rounded-md border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
                 />
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex flex-col text-[11px] uppercase tracking-widest text-ink-400">
@@ -423,7 +423,7 @@ export default function SurveyEditor({
                           options: [],
                         })
                       }
-                      className="rounded-md border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-green"
+                      className="rounded-md border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-gold"
                     >
                       {Q_TYPES.map((t) => (
                         <option key={t.value} value={t.value}>
@@ -439,7 +439,7 @@ export default function SurveyEditor({
                       onChange={(e) =>
                         updateQ(i, { is_required: e.target.checked })
                       }
-                      className="h-4 w-4 accent-cppem-green"
+                      className="h-4 w-4 accent-cppem-gold"
                     />
                     Obrigatória
                   </label>
@@ -469,7 +469,7 @@ export default function SurveyEditor({
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="h-4 w-4 accent-cppem-green"
+              className="h-4 w-4 accent-cppem-gold"
             />
           </label>
           <p className="mt-2 text-xs text-ink-400">
@@ -501,7 +501,7 @@ export default function SurveyEditor({
         <button
           onClick={save}
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-cppem-green py-3 text-sm font-bold uppercase tracking-widest text-cppem-black transition disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-cppem-gold-solid py-3 text-sm font-bold uppercase tracking-widest text-cppem-bg transition disabled:opacity-60"
         >
           <Save className="h-4 w-4" />
           {isPending ? "Salvando..." : "Salvar pesquisa"}
@@ -558,7 +558,7 @@ function IconBtn({
     <button
       {...rest}
       type="button"
-      className="grid h-7 w-7 place-items-center rounded-md border border-ink-700 text-ink-300 transition hover:border-cppem-green hover:text-cppem-green disabled:opacity-30"
+      className="grid h-7 w-7 place-items-center rounded-md border border-ink-700 text-ink-300 transition hover:border-cppem-gold hover:text-cppem-gold disabled:opacity-30"
     >
       {children}
     </button>
@@ -587,7 +587,7 @@ function OptionsEditor({
               onChange(next);
             }}
             placeholder={`Opção ${i + 1}`}
-            className="flex-1 rounded-md border border-ink-700 bg-ink-900 px-3 py-2 text-sm outline-none focus:border-cppem-green"
+            className="flex-1 rounded-md border border-ink-700 bg-ink-900 px-3 py-2 text-sm outline-none focus:border-cppem-gold"
           />
           <button
             type="button"
@@ -601,7 +601,7 @@ function OptionsEditor({
       <button
         type="button"
         onClick={() => onChange([...options, ""])}
-        className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+        className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
       >
         <Plus className="h-3 w-3" /> Adicionar opção
       </button>

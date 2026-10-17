@@ -110,7 +110,7 @@ export default function ProductsManager({
           <select
             value={buId}
             onChange={(e) => setBuId(e.target.value)}
-            className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+            className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
           >
             {businessUnits.map((b) => (
               <option key={b.id} value={b.id}>
@@ -127,7 +127,7 @@ export default function ProductsManager({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ex.: Mentoria 2026"
-            className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+            className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
           />
         </label>
         <label className="mt-3 block">
@@ -139,7 +139,7 @@ export default function ProductsManager({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Descrição opcional"
-            className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-green"
+            className="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-2.5 text-sm outline-none focus:border-cppem-gold"
           />
         </label>
         {error ? (
@@ -148,7 +148,7 @@ export default function ProductsManager({
         <button
           onClick={add}
           disabled={isPending}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-cppem-green py-2.5 text-sm font-bold uppercase tracking-widest text-cppem-black disabled:opacity-60"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-cppem-gold-solid py-2.5 text-sm font-bold uppercase tracking-widest text-cppem-bg disabled:opacity-60"
         >
           <Plus className="h-4 w-4" /> Adicionar
         </button>

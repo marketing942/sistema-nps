@@ -11,7 +11,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       title={isLight ? "Modo escuro" : "Modo claro"}
       aria-label={isLight ? "Ativar modo escuro" : "Ativar modo claro"}
-      className="grid h-8 w-8 place-items-center rounded-md border border-ink-700 text-ink-300 transition hover:border-cppem-green hover:text-cppem-green"
+      className="grid h-8 w-8 place-items-center rounded-md border border-ink-700 text-ink-300 transition hover:border-cppem-gold hover:text-cppem-gold"
     >
       {isLight ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
     </button>

@@ -302,7 +302,7 @@ function RankingCard({
             <Link
               key={s.survey_id}
               href={`/admin/pesquisas/${s.survey_id}`}
-              className="flex items-center justify-between rounded-md border border-ink-800 bg-ink-950/50 px-4 py-3 transition hover:border-cppem-green/40"
+              className="flex items-center justify-between rounded-md border border-ink-800 bg-ink-950/50 px-4 py-3 transition hover:border-cppem-gold/40"
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{s.survey_name}</p>
@@ -349,7 +349,7 @@ function CommentsCard({
               className={`rounded-md border-l-2 bg-ink-950/50 px-4 py-3 ${
                 tone === "bad"
                   ? "border-rose-400/60"
-                  : "border-cppem-green/40"
+                  : "border-cppem-gold/40"
               }`}
             >
               <p className="text-sm leading-relaxed">{c.text_value}</p>

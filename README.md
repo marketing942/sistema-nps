@@ -3,7 +3,7 @@
 Sistema interno de gestão da satisfação dos clientes, com painel administrativo, criação dinâmica de pesquisas e links públicos por unidade de negócio.
 
 - **Stack**: Next.js 14 (App Router) · Tailwind CSS · Supabase · Recharts · Lucide
-- **Unidades de negócio**: CPPEM Concursos (preto/verde militar) e Colégio CPPEM (azul-marinho/dourado)
+- **Unidades de negócio**: CPPEM Concursos (nova identidade: preto/dourado, igual à Central de Ajuda) e Colégio CPPEM (azul-marinho/dourado)
 - **Deploy**: Vercel
 
 ---

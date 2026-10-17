@@ -81,7 +81,7 @@ export default function DashboardFilters({
       />
       <button
         onClick={() => router.push("?")}
-        className="ml-auto flex items-center gap-2 rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+        className="ml-auto flex items-center gap-2 rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
       >
         <RefreshCw className="h-3 w-3" />
         Limpar
@@ -107,7 +107,7 @@ function Select({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-w-[180px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-green"
+        className="min-w-[180px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-gold"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -135,7 +135,7 @@ function DateInput({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-green"
+        className="rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-gold"
       />
     </label>
   );

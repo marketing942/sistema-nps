@@ -3,51 +3,50 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "DM Sans", "Montserrat", system-ui, sans-serif;
-  --font-display: "Cinzel", "Bebas Neue", serif;
-  --font-serif: "Libre Baskerville", serif;
+  /* DARK (default) — admin tokens, paleta da nova identidade CPPEM */
+  --ink-950: 10 10 11;
+  --ink-900: 17 17 21;
+  --ink-800: 24 24 30;
+  --ink-700: 38 37 46;
+  --ink-600: 52 50 60;
+  --ink-500: 84 81 88;
+  --ink-400: 135 132 122;
+  --ink-300: 173 169 155;
+  --ink-200: 214 210 198;
+  --ink-100: 232 228 217;
+  --ink-50: 247 245 239;
 
-  /* DARK (default) — admin tokens */
-  --ink-950: 10 10 12;
-  --ink-900: 16 16 21;
-  --ink-800: 22 22 29;
-  --ink-700: 31 31 41;
-  --ink-600: 42 42 54;
-  --ink-500: 59 59 77;
-  --ink-400: 107 107 127;
-  --ink-300: 161 161 179;
-  --ink-200: 212 212 221;
-  --ink-100: 236 236 241;
-  --ink-50: 247 247 250;
-
-  --accent: 0 230 60;
-  --accent-text: 10 10 10;
+  --accent: 175 146 86;
+  --accent-text: 10 10 11;
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
     0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 html.light {
-  /* LIGHT mode tokens — inverted */
-  --ink-950: 248 249 252; /* page bg */
+  /* LIGHT mode tokens — inverted, tons quentes */
+  --ink-950: 250 248 243; /* page bg */
   --ink-900: 255 255 255; /* cards */
-  --ink-800: 243 244 248; /* muted surface / inputs */
-  --ink-700: 224 226 233; /* borders strong */
-  --ink-600: 200 203 213;
-  --ink-500: 150 153 165;
-  --ink-400: 105 108 122; /* muted text */
-  --ink-300: 70 73 88;
-  --ink-200: 38 40 52;
-  --ink-100: 16 18 28; /* primary text */
-  --ink-50: 8 9 14;
+  --ink-800: 244 241 233; /* muted surface / inputs */
+  --ink-700: 228 223 211; /* borders strong */
+  --ink-600: 203 197 182;
+  --ink-500: 154 149 135;
+  --ink-400: 110 106 94; /* muted text */
+  --ink-300: 74 71 62;
+  --ink-200: 42 40 34;
+  --ink-100: 20 18 14; /* primary text */
+  --ink-50: 10 9 7;
+
+  --accent: 138 112 64; /* gold-dark: contraste em fundo claro */
 
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 1px 2px rgba(15, 15, 25, 0.06);
+    0 1px 2px rgba(25, 20, 10, 0.07);
 }
 
 html,
 body {
   background: rgb(var(--ink-950));
   color: rgb(var(--ink-100));
+  font-family: var(--font-body), system-ui, sans-serif;
   min-height: 100%;
   color-scheme: dark;
 }
@@ -59,6 +58,16 @@ html.light body {
 
 * {
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #af9256;
+  color: #0a0a0b;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
 }
 
 /* Inputs/selects herdam cor — garante contraste em ambos os modos */
@@ -81,22 +90,42 @@ html:not(.light) input[type="date"]::-webkit-calendar-picker-indicator {
  * Public survey — scoped brand variables (sempre fixos por marca)
  * --------------------------------------------------------------- */
 .brand-cppem {
-  --b-bg: #0a0a0a;
-  --b-bg-alt: #111111;
-  --b-card: #111111;
-  --b-border: #1e1e1e;
-  --b-text: #f5f5f5;
-  --b-muted: #888888;
-  --b-primary: #00e63c;
-  --b-primary-text: #0a0a0a;
-  --b-accent: #c9a84c;
-  background: var(--b-bg);
+  --b-bg: #0a0a0b;
+  --b-bg-alt: #111115;
+  --b-card: rgba(24, 24, 30, 0.85);
+  --b-border: rgba(175, 146, 86, 0.18);
+  --b-text: #e8e4d9;
+  --b-muted: #87847a;
+  --b-primary: #af9256;
+  --b-primary-text: #16130c;
+  --b-accent: #c9ae7a;
+  background: radial-gradient(
+      900px 460px at 90% 0%,
+      rgba(175, 146, 86, 0.1),
+      transparent 65%
+    ),
+    radial-gradient(
+      800px 500px at 0% 75%,
+      rgba(91, 140, 184, 0.04),
+      transparent 70%
+    ),
+    var(--b-bg);
   color: var(--b-text);
-  font-family: "Montserrat", system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }
 .brand-cppem .b-display {
-  font-family: "Bebas Neue", "Montserrat", sans-serif;
-  letter-spacing: 0.04em;
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: 0;
+}
+.brand-cppem .b-primary-bg {
+  background: linear-gradient(150deg, #f0dcb0, #af9256 55%, #8a7040);
+}
+.brand-cppem .b-primary-text {
+  color: var(--b-accent);
+}
+.brand-cppem ::selection {
+  background: #af9256;
+  color: #0a0a0b;
 }
 
 .brand-colegio {
@@ -111,10 +140,10 @@ html:not(.light) input[type="date"]::-webkit-calendar-picker-indicator {
   --b-accent: #e8c350;
   background: var(--b-bg);
   color: var(--b-text);
-  font-family: "DM Sans", system-ui, sans-serif;
+  font-family: var(--font-dm-sans), "DM Sans", system-ui, sans-serif;
 }
 .brand-colegio .b-display {
-  font-family: "Cinzel", serif;
+  font-family: var(--font-cinzel), "Cinzel", serif;
   letter-spacing: 0.05em;
 }
 
@@ -137,12 +166,9 @@ html:not(.light) input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ---------------------------------------------------------------
- * Admin accent helpers — verde forte é a marca; em modo claro
- * usamos um verde escuro para textos pra melhorar contraste.
+ * Admin accent helpers — dourado é a marca; em modo claro --accent
+ * já assume o dourado escuro para manter o contraste do texto.
  * --------------------------------------------------------------- */
-html.light .accent-text {
-  color: #008a2a;
-}
 .accent-text {
   color: rgb(var(--accent));
 }

@@ -26,16 +26,19 @@ export default async function ObrigadoPage({ params }: Props) {
     ? survey?.business_unit[0]
     : (survey?.business_unit as any);
   const brand = getBrand(bu?.brand_type);
+  const logoSrc = brand.type === "cppem" ? brand.logoUrl : bu?.logo_url;
   const referralUrl = REFERRAL_LINKS[brand.type];
 
   return (
     <div className={`brand-${brand.type} min-h-screen`}>
       <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center px-5 py-10 text-center">
-        {bu?.logo_url ? (
+        {logoSrc ? (
           <img
-            src={bu.logo_url}
-            alt={bu.name}
-            className="mb-6 h-20 w-20 object-contain"
+            src={logoSrc}
+            alt={bu?.name ?? "CPPEM"}
+            className={`mb-6 object-contain ${
+              brand.type === "cppem" ? "h-16 w-auto" : "h-20 w-20"
+            }`}
           />
         ) : null}
         <CheckCircle2 className="b-primary-text mb-4 h-14 w-14" />

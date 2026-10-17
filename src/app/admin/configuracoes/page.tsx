@@ -106,7 +106,7 @@ function RuleCard({
 }) {
   return (
     <div className="rounded-md border border-ink-800 bg-ink-950/40 p-4">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-cppem-green">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-cppem-gold">
         {title}
       </p>
       <ul className="space-y-1.5">
