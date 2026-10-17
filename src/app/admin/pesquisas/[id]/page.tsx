@@ -98,7 +98,7 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
             <Link
               href={`/pesquisa/${survey.slug}`}
               target="_blank"
-              className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+              className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
             >
               <ExternalLink className="h-3.5 w-3.5" /> Abrir pesquisa
             </Link>
@@ -188,7 +188,7 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
                     key={q.id}
                     className="rounded-md border border-ink-800 bg-ink-950/40 px-3 py-2 text-sm"
                   >
-                    <span className="mr-2 text-[10px] uppercase tracking-widest text-cppem-green">
+                    <span className="mr-2 text-[10px] uppercase tracking-widest text-cppem-gold">
                       {i + 1}.
                     </span>
                     {q.question_text}
@@ -251,13 +251,13 @@ function TabLink({
       href={href}
       className={`relative px-4 py-3 text-xs uppercase tracking-widest transition ${
         active
-          ? "text-cppem-green"
+          ? "text-cppem-gold"
           : "text-ink-400 hover:text-ink-100"
       }`}
     >
       {children}
       {active ? (
-        <span className="absolute inset-x-0 -bottom-px h-0.5 bg-cppem-green" />
+        <span className="absolute inset-x-0 -bottom-px h-0.5 bg-cppem-gold-solid" />
       ) : null}
     </Link>
   );

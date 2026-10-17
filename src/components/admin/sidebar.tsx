@@ -9,7 +9,6 @@ import {
   MessageSquare,
   Boxes,
   Settings,
-  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,16 +25,19 @@ export default function Sidebar() {
   const pathname = usePathname();
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-ink-800 bg-ink-900 px-4 py-6 lg:flex">
-      <div className="mb-8 flex items-center gap-3 px-2">
-        <div className="grid h-9 w-9 place-items-center rounded-md bg-cppem-green">
-          <Shield className="h-4 w-4 text-cppem-black" />
-        </div>
-        <div>
-          <p className="text-sm font-bold tracking-wide">CENTRAL CPPEM</p>
-          <p className="text-[10px] uppercase tracking-widest text-ink-400">
-            NPS · CSAT · Stars
-          </p>
-        </div>
+      <div className="mb-8 px-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/logo-cppem.png"
+          alt="CPPEM"
+          className="h-10 w-auto"
+        />
+        <p className="mt-3 font-ui text-[11px] font-bold uppercase tracking-[0.18em] text-cppem-gold">
+          Central de Satisfação
+        </p>
+        <p className="text-[10px] uppercase tracking-widest text-ink-400">
+          NPS · CSAT · Stars
+        </p>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -50,7 +52,7 @@ export default function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition",
                 active
-                  ? "bg-cppem-green/10 text-cppem-green"
+                  ? "bg-cppem-gold/10 text-cppem-gold"
                   : "text-ink-300 hover:bg-ink-800 hover:text-ink-100"
               )}
             >

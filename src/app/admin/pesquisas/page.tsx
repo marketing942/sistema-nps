@@ -28,7 +28,7 @@ export default async function PesquisasPage() {
         action={
           <Link
             href="/admin/pesquisas/nova"
-            className="flex items-center gap-2 rounded-md bg-cppem-green px-4 py-2.5 text-sm font-bold uppercase tracking-widest text-cppem-black transition hover:opacity-90"
+            className="flex items-center gap-2 rounded-md bg-cppem-gold-solid px-4 py-2.5 text-sm font-bold uppercase tracking-widest text-cppem-bg transition hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
             Nova pesquisa
@@ -43,7 +43,7 @@ export default async function PesquisasPage() {
           action={
             <Link
               href="/admin/pesquisas/nova"
-              className="inline-flex items-center gap-2 rounded-md bg-cppem-green px-4 py-2 text-sm font-bold uppercase tracking-widest text-cppem-black"
+              className="inline-flex items-center gap-2 rounded-md bg-cppem-gold-solid px-4 py-2 text-sm font-bold uppercase tracking-widest text-cppem-bg"
             >
               <Plus className="h-4 w-4" />
               Criar pesquisa
@@ -77,7 +77,7 @@ export default async function PesquisasPage() {
                     <td className="px-4 py-3">
                       <Link
                         href={`/admin/pesquisas/${s.id}`}
-                        className="font-semibold hover:text-cppem-green"
+                        className="font-semibold hover:text-cppem-gold"
                       >
                         {s.name}
                       </Link>
@@ -106,7 +106,7 @@ export default async function PesquisasPage() {
                         <Link
                           href={publicUrl}
                           target="_blank"
-                          className="grid h-8 w-8 place-items-center rounded-md border border-ink-700 text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+                          className="grid h-8 w-8 place-items-center rounded-md border border-ink-700 text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
                           title="Abrir link público"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />

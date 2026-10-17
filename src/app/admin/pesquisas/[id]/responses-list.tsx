@@ -102,7 +102,7 @@ export default function ResponsesList({ responses }: { responses: Response[] }) 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nome, e-mail, telefone ou comentário..."
-            className="w-full rounded-md border border-ink-700 bg-ink-800 py-2.5 pl-9 pr-3 text-sm text-ink-100 outline-none focus:border-cppem-green"
+            className="w-full rounded-md border border-ink-700 bg-ink-800 py-2.5 pl-9 pr-3 text-sm text-ink-100 outline-none focus:border-cppem-gold"
           />
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -126,7 +126,7 @@ export default function ResponsesList({ responses }: { responses: Response[] }) 
                       ? "border-rose-500/60 bg-rose-500/10 text-rose-300"
                       : tone === "neutral"
                         ? "border-amber-500/60 bg-amber-500/10 text-amber-300"
-                        : "border-cppem-green text-cppem-green"
+                        : "border-cppem-gold text-cppem-gold"
                   : "border-ink-700 text-ink-300 hover:border-ink-600"
               }`}
             >
@@ -239,7 +239,7 @@ function AnswerRow({ answer, index }: { answer: Answer; index: number }) {
   return (
     <div className="p-5">
       <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink-400">
-        <span className="text-cppem-green">Q{index + 1}</span>
+        <span className="text-cppem-gold">Q{index + 1}</span>
         <span>·</span>
         <span>{TYPE_LABELS[q.question_type]}</span>
       </div>
@@ -351,12 +351,12 @@ function renderAnswer(a: Answer, q: NonNullable<Answer["question"]>) {
           className={`relative rounded-md border-l-2 p-4 ${
             risky
               ? "border-rose-500/60 bg-rose-500/5"
-              : "border-cppem-green/50 bg-ink-950/40"
+              : "border-cppem-gold/50 bg-ink-950/40"
           }`}
         >
           <MessageSquareQuote
             className={`absolute -top-2 left-3 h-4 w-4 ${
-              risky ? "text-rose-400" : "text-cppem-green"
+              risky ? "text-rose-400" : "text-cppem-gold"
             }`}
           />
           <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink-100">
@@ -386,7 +386,7 @@ function renderAnswer(a: Answer, q: NonNullable<Answer["question"]>) {
       if (!choice) return <Empty />;
       return (
         <div>
-          <span className="inline-block rounded-md border border-cppem-green/40 bg-cppem-green/10 px-3 py-1.5 text-sm font-semibold text-cppem-green">
+          <span className="inline-block rounded-md border border-cppem-gold/40 bg-cppem-gold/10 px-3 py-1.5 text-sm font-semibold text-cppem-gold">
             {choice}
           </span>
           {q.options?.length ? (

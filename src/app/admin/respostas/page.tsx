@@ -56,7 +56,7 @@ export default async function RespostasPage({
         action={
           <Link
             href={`/api/export/responses?${exportParams.toString()}`}
-            className="flex items-center gap-2 rounded-md bg-cppem-green px-4 py-2 text-sm font-bold uppercase tracking-widest text-cppem-black"
+            className="flex items-center gap-2 rounded-md bg-cppem-gold-solid px-4 py-2 text-sm font-bold uppercase tracking-widest text-cppem-bg"
           >
             <Download className="h-4 w-4" /> Exportar CSV
           </Link>
@@ -85,7 +85,7 @@ export default async function RespostasPage({
             })),
           ]}
         />
-        <button className="rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green">
+        <button className="rounded-md border border-ink-700 px-3 py-2 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold">
           Aplicar
         </button>
       </form>
@@ -127,7 +127,7 @@ export default async function RespostasPage({
                     <td className="px-4 py-3">
                       <Link
                         href={`/admin/pesquisas/${survey?.id}?tab=responses`}
-                        className="font-semibold hover:text-cppem-green"
+                        className="font-semibold hover:text-cppem-gold"
                       >
                         {survey?.name ?? "—"}
                       </Link>
@@ -190,7 +190,7 @@ function FormSelect({
       <select
         name={name}
         defaultValue={value}
-        className="min-w-[200px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-green"
+        className="min-w-[200px] rounded-md border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-100 outline-none focus:border-cppem-gold"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

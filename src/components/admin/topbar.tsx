@@ -28,7 +28,7 @@ export default function TopBar({ email }: { email: string }) {
         <ThemeToggle />
         <button
           onClick={logout}
-          className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-green hover:text-cppem-green"
+          className="flex items-center gap-2 rounded-md border border-ink-700 px-3 py-1.5 text-xs uppercase tracking-widest text-ink-300 hover:border-cppem-gold hover:text-cppem-gold"
         >
           <LogOut className="h-3.5 w-3.5" />
           Sair

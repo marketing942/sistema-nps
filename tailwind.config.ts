@@ -5,22 +5,29 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "serif"],
-        serif: ["var(--font-serif)", "serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        ui: ["var(--font-ui)", "system-ui", "sans-serif"],
+        "colegio-display": ["var(--font-cinzel)", "serif"],
+        "colegio-body": ["var(--font-dm-sans)", "system-ui", "sans-serif"],
       },
       colors: {
-        // CPPEM Concursos
+        // CPPEM — nova identidade (mesmos tokens da Central de Ajuda)
         cppem: {
-          green: "#00E63C",
-          "green-dark": "#00803D",
-          military: "#1A3D2B",
-          black: "#0A0A0A",
-          card: "#111111",
-          border: "#1E1E1E",
-          white: "#F5F5F5",
-          gray: "#888888",
-          gold: "#C9A84C",
+          // dourado adaptativo (texto/bordas): claro no dark, escuro no light
+          gold: "rgb(var(--accent) / <alpha-value>)",
+          // dourado fixo para fundos de botão (sempre com texto escuro)
+          "gold-solid": "#AF9256",
+          "gold-light": "#C9AE7A",
+          "gold-pale": "#F0DCB0",
+          "gold-dark": "#8A7040",
+          bg: "#0A0A0B",
+          surface: "#111115",
+          "surface-2": "#18181E",
+          "surface-3": "#1F1F28",
+          text: "#E8E4D9",
+          "text-soft": "#ADA99B",
+          "text-muted": "#87847A",
         },
         // Colégio CPPEM
         colegio: {

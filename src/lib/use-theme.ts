@@ -47,24 +47,24 @@ export function useChartColors() {
   const { theme } = useTheme();
   if (theme === "light") {
     return {
-      grid: "#e5e7eb",
-      axis: "#6b7280",
+      grid: "#e4dfd3",
+      axis: "#6e6a5e",
       tooltipBg: "#ffffff",
-      tooltipBorder: "#e5e7eb",
-      tooltipLabel: "#1f2937",
-      tooltipText: "#111827",
-      primary: "#00803D",
-      gold: "#A07B10",
+      tooltipBorder: "#e4dfd3",
+      tooltipLabel: "#2a2822",
+      tooltipText: "#14120e",
+      primary: "#8A7040",
+      gold: "#3f6f9c",
     };
   }
   return {
-    grid: "#1f1f29",
-    axis: "#6b6b7f",
-    tooltipBg: "#101015",
-    tooltipBorder: "#1f1f29",
-    tooltipLabel: "#a1a1b3",
-    tooltipText: "#ececf1",
-    primary: "#00E63C",
-    gold: "#C9A227",
+    grid: "#26252e",
+    axis: "#87847a",
+    tooltipBg: "#111115",
+    tooltipBorder: "rgba(175,146,86,0.3)",
+    tooltipLabel: "#ada99b",
+    tooltipText: "#e8e4d9",
+    primary: "#C9AE7A",
+    gold: "#5b8cb8",
   };
 }

@@ -38,16 +38,20 @@ export default async function PublicSurveyPage({ params }: Props) {
     ? survey.product?.[0]
     : (survey.product as any);
   const brand = getBrand(bu?.brand_type);
+  // CPPEM: logo oficial da nova identidade (local). Colégio: mantém o logo do banco.
+  const logoSrc = brand.type === "cppem" ? brand.logoUrl : bu?.logo_url;
 
   return (
     <div className={`brand-${brand.type} min-h-screen`}>
       <div className="mx-auto max-w-2xl px-5 py-10 sm:py-14">
         <header className="mb-8 flex flex-col items-center text-center">
-          {bu?.logo_url ? (
+          {logoSrc ? (
             <img
-              src={bu.logo_url}
-              alt={bu.name}
-              className="mb-5 h-20 w-20 object-contain"
+              src={logoSrc}
+              alt={bu?.name ?? "CPPEM"}
+              className={`mb-5 object-contain ${
+                brand.type === "cppem" ? "h-16 w-auto" : "h-20 w-20"
+              }`}
             />
           ) : null}
           <p className="b-primary-text text-[11px] font-semibold uppercase tracking-[0.25em]">

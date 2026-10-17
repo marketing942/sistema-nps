@@ -6,8 +6,8 @@
 insert into public.business_units (name, slug, brand_type, logo_url, primary_color, secondary_color)
 values
   ('CPPEM Concursos', 'cppem-concursos', 'cppem',
-   'https://raw.githubusercontent.com/marketing942/fotos-dos-bots/main/LOGO%20CPPEM.png',
-   '#00E63C', '#0A0A0A'),
+   '/brand/logo-cppem.png',
+   '#AF9256', '#0A0A0B'),
   ('Colégio CPPEM', 'colegio-cppem', 'colegio',
    'https://raw.githubusercontent.com/marketing942/fotos-dos-bots/main/LOGO%20COLE%CC%81GIO.png',
    '#0D1B3E', '#C9A227')
