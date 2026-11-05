@@ -1,0 +1,7 @@
+# Mentoria PPPE (Polícia Penal PE) — pppe.cppem.com.br
+# Página de venda: indexável.
+User-agent: *
+Allow: /
+Disallow: /README.md
+
+Sitemap: https://pppe.cppem.com.br/sitemap.xml
