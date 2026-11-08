@@ -20,11 +20,6 @@ export default async function ComentariosPage({
 }) {
   const supabase = createClient();
 
-  const [{ data: bus }, { data: surveys }] = await Promise.all([
-    supabase.from("business_units").select("id, name"),
-    supabase.from("surveys").select("id, name"),
-  ]);
-
   let query = supabase
     .from("v_answers_classified")
     .select(
@@ -38,7 +33,11 @@ export default async function ComentariosPage({
   if (searchParams.bu) query = query.eq("business_unit_id", searchParams.bu);
   if (searchParams.survey) query = query.eq("survey_id", searchParams.survey);
 
-  const { data: rows } = await query;
+  const [{ data: bus }, { data: surveys }, { data: rows }] = await Promise.all([
+    supabase.from("business_units").select("id, name"),
+    supabase.from("surveys").select("id, name"),
+    query,
+  ]);
 
   // For each text answer, also fetch the score answer in the same response (NPS or stars)
   const responseIds = (rows ?? []).map((r: any) => r.response_id);
@@ -62,11 +61,8 @@ export default async function ComentariosPage({
     }
   }
 
-  const { data: surveyNames } = await supabase
-    .from("surveys")
-    .select("id, name");
   const surveyMap = new Map<string, string>(
-    (surveyNames ?? []).map((s: any) => [s.id, s.name])
+    (surveys ?? []).map((s: any) => [s.id, s.name])
   );
 
   const category = searchParams.category ?? "all";

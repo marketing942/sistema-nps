@@ -92,3 +92,21 @@ export function detectRisk(text: string | null | undefined): boolean {
   const lower = text.toLowerCase();
   return RISK_KEYWORDS.some((k) => lower.includes(k));
 }
+
+/** Cor de cada nota 0–10 no histograma (promotor / neutro / detrator). */
+export function npsScoreColor(score: number): string {
+  return score >= 9 ? "#10b981" : score >= 7 ? "#f59e0b" : "#ef4444";
+}
+
+/** Converte as linhas de fn_nps_distribution em dados do gráfico (0 a 10). */
+export function buildNpsDistribution(
+  rows: { score: number; total: number | string }[] | null | undefined
+) {
+  const byScore = new Map<number, number>();
+  for (const r of rows ?? []) byScore.set(Number(r.score), Number(r.total));
+  return Array.from({ length: 11 }, (_, i) => ({
+    label: String(i),
+    value: byScore.get(i) ?? 0,
+    color: npsScoreColor(i),
+  }));
+}

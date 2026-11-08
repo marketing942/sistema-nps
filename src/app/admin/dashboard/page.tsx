@@ -1,10 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import KpiCard from "@/components/ui/kpi-card";
 import PageHeader from "@/components/ui/page-header";
-import NpsEvolution from "@/components/charts/nps-evolution";
-import DistributionBars from "@/components/charts/distribution-bars";
+import { NpsEvolution, DistributionBars } from "@/components/charts/lazy";
 import NpsGauge from "@/components/charts/nps-gauge";
-import { npsLabel, detectRisk } from "@/lib/nps";
+import { npsLabel, detectRisk, buildNpsDistribution } from "@/lib/nps";
 import DashboardFilters from "./filters";
 import Link from "next/link";
 import { formatDateTime } from "@/lib/utils";
@@ -25,14 +24,6 @@ export default async function DashboardPage({
 }) {
   const supabase = createClient();
 
-  const [{ data: bus }, { data: products }] = await Promise.all([
-    supabase.from("business_units").select("id, name, slug, brand_type"),
-    supabase
-      .from("products")
-      .select("id, name, business_unit_id, is_active")
-      .eq("is_active", true),
-  ]);
-
   // Resolve filters
   const buId = searchParams.bu || null;
   const productId = searchParams.product || null;
@@ -42,79 +33,22 @@ export default async function DashboardPage({
   const toIso = searchParams.to
     ? new Date(searchParams.to + "T23:59:59").toISOString()
     : null;
-
-  // Overview RPC
-  const { data: overview } = await supabase.rpc("fn_metrics_overview", {
+  const rpcArgs = {
     p_business_unit: buId,
     p_product: productId,
     p_from: fromIso,
     p_to: toIso,
-  });
-  const m = (overview as any[])?.[0] ?? {};
+  };
 
-  // NPS por respondente (1 voz por respondente)
-  let npsQuery = supabase
-    .from("v_response_nps")
-    .select(
-      "response_id, nps_score, classification, business_unit_id, product_id, submitted_at"
-    );
-  if (buId) npsQuery = npsQuery.eq("business_unit_id", buId);
-  if (productId) npsQuery = npsQuery.eq("product_id", productId);
-  if (fromIso) npsQuery = npsQuery.gte("submitted_at", fromIso);
-  if (toIso) npsQuery = npsQuery.lte("submitted_at", toIso);
-  const { data: npsResponses } = await npsQuery;
-
-  const distribution = Array.from({ length: 11 }, (_, i) => ({
-    label: String(i),
-    value: (npsResponses ?? []).filter(
-      (a: any) => Math.round(Number(a.nps_score)) === i
-    ).length,
-    color: i >= 9 ? "#10b981" : i >= 7 ? "#f59e0b" : "#ef4444",
-  }));
-
-  // Evolution — monthly buckets last 6 months (por respondente)
-  const months = lastNMonths(6);
-  const evolution = months.map((mo) => {
-    const inMonth = (npsResponses ?? []).filter((a: any) => {
-      const d = new Date(a.submitted_at);
-      return d.getFullYear() === mo.year && d.getMonth() === mo.month;
-    });
-    const promoters = inMonth.filter(
-      (a: any) => a.classification === "promoter"
-    ).length;
-    const detractors = inMonth.filter(
-      (a: any) => a.classification === "detractor"
-    ).length;
-    const total = inMonth.length;
-    return {
-      label: mo.label,
-      nps:
-        total === 0 ? null : Math.round(((promoters - detractors) / total) * 100),
-    };
-  });
-
-  // Ranking por pesquisa
   let surveyMetricsQuery = supabase
     .from("v_survey_metrics")
     .select(
       "survey_id, survey_name, business_unit_id, product_id, total_responses, nps_score, csat_score, average_stars"
     );
   if (buId) surveyMetricsQuery = surveyMetricsQuery.eq("business_unit_id", buId);
-  if (productId) surveyMetricsQuery = surveyMetricsQuery.eq("product_id", productId);
-  const { data: surveyMetrics } = await surveyMetricsQuery.order(
-    "nps_score",
-    { ascending: false, nullsFirst: false }
-  );
-  const ranked = (surveyMetrics ?? []).filter(
-    (s: any) => s.total_responses > 0
-  );
-  const topRanked = ranked.slice(0, 5);
-  const worstRanked = [...ranked]
-    .filter((s: any) => s.nps_score !== null)
-    .sort((a: any, b: any) => a.nps_score - b.nps_score)
-    .slice(0, 5);
+  if (productId)
+    surveyMetricsQuery = surveyMetricsQuery.eq("product_id", productId);
 
-  // Comentários recentes
   let commentsQuery = supabase
     .from("v_answers_classified")
     .select(
@@ -128,7 +62,63 @@ export default async function DashboardPage({
   if (productId) commentsQuery = commentsQuery.eq("product_id", productId);
   if (fromIso) commentsQuery = commentsQuery.gte("submitted_at", fromIso);
   if (toIso) commentsQuery = commentsQuery.lte("submitted_at", toIso);
-  const { data: comments } = await commentsQuery;
+
+  // Todas as consultas são independentes: rodam em paralelo (1 round-trip
+  // de latência em vez de 6 em sequência). Os gráficos vêm agregados do
+  // banco (11 + ≤6 linhas) em vez de baixar todas as respostas.
+  const [
+    { data: bus },
+    { data: products },
+    { data: overview },
+    { data: distRows },
+    { data: evoRows },
+    { data: surveyMetrics },
+    { data: comments },
+  ] = await Promise.all([
+    supabase.from("business_units").select("id, name, slug, brand_type"),
+    supabase
+      .from("products")
+      .select("id, name, business_unit_id, is_active")
+      .eq("is_active", true),
+    supabase.rpc("fn_metrics_overview", rpcArgs),
+    supabase.rpc("fn_nps_distribution", rpcArgs),
+    supabase.rpc("fn_nps_evolution", { ...rpcArgs, p_months: 6 }),
+    surveyMetricsQuery.order("nps_score", {
+      ascending: false,
+      nullsFirst: false,
+    }),
+    commentsQuery,
+  ]);
+
+  const m = (overview as any[])?.[0] ?? {};
+  const distribution = buildNpsDistribution(distRows as any[]);
+
+  // Evolução — últimos 6 meses (meses sem respostas ficam com nps = null)
+  const evoByMonth = new Map<string, any>(
+    ((evoRows as any[]) ?? []).map((r) => [String(r.month_start).slice(0, 7), r])
+  );
+  const evolution = lastNMonths(6).map((mo) => {
+    const r = evoByMonth.get(mo.key);
+    const total = Number(r?.total ?? 0);
+    return {
+      label: mo.label,
+      nps:
+        total === 0
+          ? null
+          : Math.round(
+              ((Number(r.promoters) - Number(r.detractors)) / total) * 100
+            ),
+    };
+  });
+
+  const ranked = (surveyMetrics ?? []).filter(
+    (s: any) => s.total_responses > 0
+  );
+  const topRanked = ranked.slice(0, 5);
+  const worstRanked = [...ranked]
+    .filter((s: any) => s.nps_score !== null)
+    .sort((a: any, b: any) => a.nps_score - b.nps_score)
+    .slice(0, 5);
 
   const npsValue = m.nps_score ?? null;
   const tone = npsLabel(npsValue);
@@ -265,16 +255,16 @@ export default async function DashboardPage({
 }
 
 function lastNMonths(n: number) {
-  const out: { year: number; month: number; label: string }[] = [];
-  const now = new Date();
+  // Mês corrente no fuso de Caruaru/Recife, igual ao usado em fn_nps_evolution.
+  const nowLocal = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Recife" })
+  );
+  const out: { key: string; label: string }[] = [];
   for (let i = n - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const d = new Date(nowLocal.getFullYear(), nowLocal.getMonth() - i, 1);
     out.push({
-      year: d.getFullYear(),
-      month: d.getMonth(),
-      label: d.toLocaleDateString("pt-BR", {
-        month: "short",
-      }),
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+      label: d.toLocaleDateString("pt-BR", { month: "short" }),
     });
   }
   return out;

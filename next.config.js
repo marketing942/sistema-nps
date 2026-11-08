@@ -16,6 +16,10 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Importa só os ícones/gráficos usados (bundle menor, build mais rápido).
+  experimental: {
+    optimizePackageImports: ["lucide-react", "recharts"],
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "raw.githubusercontent.com" },

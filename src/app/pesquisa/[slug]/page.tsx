@@ -17,7 +17,8 @@ export default async function PublicSurveyPage({ params }: Props) {
     .select(
       `id, name, slug, description, audience, is_active,
        business_unit:business_units(id, name, brand_type, logo_url),
-       product:products(id, name)`
+       product:products(id, name),
+       questions:survey_questions(*)`
     )
     .eq("slug", params.slug)
     .eq("is_active", true)
@@ -25,11 +26,9 @@ export default async function PublicSurveyPage({ params }: Props) {
 
   if (!survey) notFound();
 
-  const { data: questions } = await supabase
-    .from("survey_questions")
-    .select("*")
-    .eq("survey_id", survey.id)
-    .order("order_index", { ascending: true });
+  const questions = [...((survey as any).questions ?? [])].sort(
+    (a: any, b: any) => a.order_index - b.order_index
+  );
 
   const bu = Array.isArray(survey.business_unit)
     ? survey.business_unit[0]
@@ -82,7 +81,7 @@ export default async function PublicSurveyPage({ params }: Props) {
           surveySlug={survey.slug}
           businessUnitId={bu?.id}
           productId={product?.id ?? null}
-          questions={questions ?? []}
+          questions={questions}
           brandType={brand.type}
         />
 

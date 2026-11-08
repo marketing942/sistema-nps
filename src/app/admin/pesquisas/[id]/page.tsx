@@ -3,7 +3,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/page-header";
 import KpiCard from "@/components/ui/kpi-card";
-import DistributionBars from "@/components/charts/distribution-bars";
+import { DistributionBars } from "@/components/charts/lazy";
+import Pagination from "@/components/ui/pagination";
+import { buildNpsDistribution } from "@/lib/nps";
 import NpsGauge from "@/components/charts/nps-gauge";
 import CopyLinkButton from "../copy-link-button";
 import { ExternalLink, Pencil } from "lucide-react";
@@ -14,78 +16,86 @@ import ResponsesList from "./responses-list";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_SIZE = 50;
+
 interface Props {
   params: { id: string };
-  searchParams: { tab?: string };
+  searchParams: { tab?: string; page?: string };
 }
 
 export default async function SurveyDetailPage({ params, searchParams }: Props) {
   const supabase = createClient();
+  const tab = searchParams.tab ?? "overview";
+  const page = Math.max(1, Number(searchParams.page) || 1);
 
+  // Pesquisa + perguntas numa só ida ao banco; o resto depende da aba aberta.
   const { data: survey } = await supabase
     .from("surveys")
     .select(
       `*, business_unit:business_units(id, name, brand_type),
-       product:products(id, name)`
+       product:products(id, name),
+       questions:survey_questions(*)`
     )
     .eq("id", params.id)
     .maybeSingle();
 
   if (!survey) notFound();
 
-  const { data: questions } = await supabase
-    .from("survey_questions")
-    .select("*")
-    .eq("survey_id", survey.id)
-    .order("order_index", { ascending: true });
+  const questions = [...((survey as any).questions ?? [])].sort(
+    (a: any, b: any) => a.order_index - b.order_index
+  );
 
-  const { data: metrics } = await supabase
-    .from("v_survey_metrics")
-    .select("*")
-    .eq("survey_id", survey.id)
-    .maybeSingle();
+  const from = (page - 1) * PAGE_SIZE;
+  const [metricsRes, distRes, respRes, buRes, productsRes] = await Promise.all([
+    tab === "overview"
+      ? supabase
+          .from("v_survey_metrics")
+          .select("*")
+          .eq("survey_id", survey.id)
+          .maybeSingle()
+      : null,
+    tab === "overview"
+      ? supabase.rpc("fn_nps_distribution", { p_survey: survey.id })
+      : null,
+    tab === "responses"
+      ? supabase
+          .from("survey_responses")
+          .select(
+            `id, submitted_at, respondent_name, respondent_email, respondent_phone, respondent_type,
+             answers:survey_answers(
+               id, numeric_value, text_value, choice_value,
+               question:survey_questions(id, question_text, question_type, order_index, options)
+             )`,
+            { count: "exact" }
+          )
+          .eq("survey_id", survey.id)
+          .order("submitted_at", { ascending: false })
+          .range(from, from + PAGE_SIZE - 1)
+      : null,
+    tab === "editor"
+      ? supabase.from("business_units").select("id, name, brand_type")
+      : null,
+    tab === "editor"
+      ? supabase
+          .from("products")
+          .select("id, name, business_unit_id, is_active")
+          .eq("is_active", true)
+      : null,
+  ]);
 
-  const { data: npsResponses } = await supabase
-    .from("v_response_nps")
-    .select("nps_score, classification")
-    .eq("survey_id", survey.id);
+  const metrics = metricsRes?.data ?? null;
+  const distribution = buildNpsDistribution(distRes?.data as any[]);
+  const recentResponses = respRes?.data ?? [];
+  const totalResponses = respRes?.count ?? 0;
+  const bus = buRes?.data ?? [];
+  const products = productsRes?.data ?? [];
 
-  const distribution = Array.from({ length: 11 }, (_, i) => ({
-    label: String(i),
-    value: (npsResponses ?? []).filter(
-      (a: any) => Math.round(Number(a.nps_score)) === i
-    ).length,
-    color: i >= 9 ? "#10b981" : i >= 7 ? "#f59e0b" : "#ef4444",
-  }));
-
-  const { data: recentResponses } = await supabase
-    .from("survey_responses")
-    .select(
-      `id, submitted_at, respondent_name, respondent_email, respondent_phone, respondent_type,
-       answers:survey_answers(
-         id, numeric_value, text_value, choice_value,
-         question:survey_questions(id, question_text, question_type, order_index, options)
-       )`
-    )
-    .eq("survey_id", survey.id)
-    .order("submitted_at", { ascending: false })
-    .limit(200);
-
-  const tab = searchParams.tab ?? "overview";
   const bu = Array.isArray(survey.business_unit)
     ? survey.business_unit[0]
     : survey.business_unit;
   const product = Array.isArray(survey.product)
     ? survey.product?.[0]
     : survey.product;
-
-  const [{ data: bus }, { data: products }] = await Promise.all([
-    supabase.from("business_units").select("id, name, brand_type"),
-    supabase
-      .from("products")
-      .select("id, name, business_unit_id, is_active")
-      .eq("is_active", true),
-  ]);
 
   return (
     <>
@@ -208,7 +218,7 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
           businessUnits={bus ?? []}
           products={products ?? []}
           survey={survey as any}
-          questions={(questions as any) ?? []}
+          questions={questions as any}
         />
       ) : null}
 
@@ -231,6 +241,15 @@ export default async function SurveyDetailPage({ params, searchParams }: Props) 
                 : a.question,
             })),
           }))}
+          footer={
+            <Pagination
+              basePath={`/admin/pesquisas/${survey.id}`}
+              params={{ tab: "responses" }}
+              page={page}
+              pageSize={PAGE_SIZE}
+              total={totalResponses}
+            />
+          }
         />
       ) : null}
     </>

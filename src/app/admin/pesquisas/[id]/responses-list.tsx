@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { memo, useDeferredValue, useMemo, useState } from "react";
 import {
   Star,
   Mail,
@@ -49,14 +49,23 @@ const TYPE_LABELS: Record<QuestionType, string> = {
 
 type FilterKey = "all" | "promoter" | "neutral" | "detractor" | "risk";
 
-export default function ResponsesList({ responses }: { responses: Response[] }) {
+export default function ResponsesList({
+  responses,
+  footer,
+}: {
+  responses: Response[];
+  footer?: React.ReactNode;
+}) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
 
+  // Mantém o input responsivo: a filtragem roda com prioridade menor.
+  const deferredSearch = useDeferredValue(search);
+
   const filtered = useMemo(() => {
     let list = responses;
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.trim().toLowerCase();
       list = list.filter((r) => {
         const inHeader =
           (r.respondent_name ?? "").toLowerCase().includes(q) ||
@@ -78,7 +87,7 @@ export default function ResponsesList({ responses }: { responses: Response[] }) 
       });
     }
     return list;
-  }, [responses, search, filter]);
+  }, [responses, deferredSearch, filter]);
 
   const counters = useMemo(() => {
     const c = { all: responses.length, promoter: 0, neutral: 0, detractor: 0, risk: 0 };
@@ -151,11 +160,18 @@ export default function ResponsesList({ responses }: { responses: Response[] }) 
           ))}
         </div>
       )}
+      {footer}
     </div>
   );
 }
 
-function ResponseCard({ response }: { response: Response }) {
+// memo: digitar na busca refiltra a lista, mas cada card só re-renderiza
+// se a própria resposta mudar.
+const ResponseCard = memo(function ResponseCard({
+  response,
+}: {
+  response: Response;
+}) {
   const summary = summarize(response);
   const sortedAnswers = [...response.answers].sort(
     (a, b) => (a.question?.order_index ?? 0) - (b.question?.order_index ?? 0)
@@ -231,7 +247,7 @@ function ResponseCard({ response }: { response: Response }) {
       </div>
     </article>
   );
-}
+});
 
 function AnswerRow({ answer, index }: { answer: Answer; index: number }) {
   const q = answer.question;

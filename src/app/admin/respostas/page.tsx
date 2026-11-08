@@ -5,12 +5,16 @@ import { formatDateTime } from "@/lib/utils";
 import { Download } from "lucide-react";
 import Link from "next/link";
 import DeleteButton from "@/components/admin/delete-button";
+import Pagination from "@/components/ui/pagination";
 
 export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 50;
 
 interface SearchParams {
   bu?: string;
   survey?: string;
+  page?: string;
 }
 
 export default async function RespostasPage({
@@ -20,13 +24,8 @@ export default async function RespostasPage({
 }) {
   const supabase = createClient();
 
-  const [{ data: bus }, { data: surveys }] = await Promise.all([
-    supabase.from("business_units").select("id, name"),
-    supabase
-      .from("surveys")
-      .select("id, name, business_unit_id")
-      .order("name"),
-  ]);
+  const page = Math.max(1, Number(searchParams.page) || 1);
+  const from = (page - 1) * PAGE_SIZE;
 
   let query = supabase
     .from("survey_responses")
@@ -34,15 +33,24 @@ export default async function RespostasPage({
       `id, submitted_at, respondent_name, respondent_email, respondent_phone, respondent_type,
        survey:surveys(id, name),
        business_unit:business_units(id, name),
-       product:products(name)`
+       product:products(name)`,
+      { count: "exact" }
     )
     .order("submitted_at", { ascending: false })
-    .limit(200);
+    .range(from, from + PAGE_SIZE - 1);
 
   if (searchParams.bu) query = query.eq("business_unit_id", searchParams.bu);
   if (searchParams.survey) query = query.eq("survey_id", searchParams.survey);
 
-  const { data: responses } = await query;
+  const [{ data: bus }, { data: surveys }, { data: responses, count }] =
+    await Promise.all([
+      supabase.from("business_units").select("id, name"),
+      supabase
+        .from("surveys")
+        .select("id, name, business_unit_id")
+        .order("name"),
+      query,
+    ]);
 
   const exportParams = new URLSearchParams();
   if (searchParams.bu) exportParams.set("bu", searchParams.bu);
@@ -169,6 +177,13 @@ export default async function RespostasPage({
           </table>
         </div>
       )}
+      <Pagination
+        basePath="/admin/respostas"
+        params={{ bu: searchParams.bu, survey: searchParams.survey }}
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={count ?? 0}
+      />
     </>
   );
 }

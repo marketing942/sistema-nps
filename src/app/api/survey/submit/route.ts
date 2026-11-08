@@ -87,7 +87,8 @@ export async function POST(req: NextRequest) {
   const { data: survey, error: sErr } = await supabase
     .from("surveys")
     .select(
-      "id, slug, is_active, business_unit_id, product_id, starts_at, ends_at"
+      `id, slug, is_active, business_unit_id, product_id, starts_at, ends_at,
+       questions:survey_questions(id, question_type, options, is_required, question_text)`
     )
     .eq("slug", surveySlug)
     .maybeSingle();
@@ -100,20 +101,16 @@ export async function POST(req: NextRequest) {
   if (survey.ends_at && new Date(survey.ends_at).getTime() < now)
     return bad("Pesquisa encerrada.", 403);
 
-  // 2. Load survey questions
-  const { data: questions, error: qErr } = await supabase
-    .from("survey_questions")
-    .select("id, question_type, options, is_required, question_text")
-    .eq("survey_id", survey.id);
-  if (qErr) return bad("Erro ao carregar perguntas.", 500);
+  // 2. Perguntas vieram junto da pesquisa (1 ida ao banco em vez de 2)
+  const questions = ((survey as any).questions ?? []) as any[];
   const questionMap = new Map<string, any>(
-    (questions ?? []).map((q) => [q.id, q])
+    questions.map((q) => [q.id, q])
   );
 
   // 3. Validate required questions are answered and ranges are valid
   const validRows: any[] = [];
 
-  for (const q of questions ?? []) {
+  for (const q of questions) {
     if (!q.is_required) continue;
     const provided = answersIn.find((a) => a.questionId === q.id);
     if (!provided)

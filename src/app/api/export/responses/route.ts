@@ -19,20 +19,33 @@ export async function GET(request: Request) {
   const bu = buRaw && UUID_RE.test(buRaw) ? buRaw : null;
   const surveyId = surveyRaw && UUID_RE.test(surveyRaw) ? surveyRaw : null;
 
-  let respQ = supabase
-    .from("survey_responses")
-    .select(
-      `id, submitted_at, respondent_name, respondent_email, respondent_phone, respondent_type, source,
-       survey:surveys(name, slug),
-       business_unit:business_units(name),
-       product:products(name)`
-    )
-    .order("submitted_at", { ascending: false });
-  if (bu) respQ = respQ.eq("business_unit_id", bu);
-  if (surveyId) respQ = respQ.eq("survey_id", surveyId);
-  const { data: responses } = await respQ;
+  // O PostgREST devolve no máximo 1000 linhas por requisição e uma URL com
+  // centenas de ids em .in() estoura o limite de tamanho. Por isso: respostas
+  // paginadas de 1000 em 1000 e answers buscadas em lotes pequenos.
+  const PAGE = 1000;
+  const responses: any[] = [];
+  for (let from = 0; ; from += PAGE) {
+    let respQ = supabase
+      .from("survey_responses")
+      .select(
+        `id, submitted_at, respondent_name, respondent_email, respondent_phone, respondent_type, source,
+         survey:surveys(name, slug),
+         business_unit:business_units(name),
+         product:products(name)`
+      )
+      .order("submitted_at", { ascending: false })
+      .order("id")
+      .range(from, from + PAGE - 1);
+    if (bu) respQ = respQ.eq("business_unit_id", bu);
+    if (surveyId) respQ = respQ.eq("survey_id", surveyId);
+    const { data, error } = await respQ;
+    if (error)
+      return NextResponse.json({ error: "Falha ao exportar." }, { status: 500 });
+    responses.push(...(data ?? []));
+    if (!data || data.length < PAGE) break;
+  }
 
-  if (!responses || responses.length === 0) {
+  if (responses.length === 0) {
     return new NextResponse("Nenhuma resposta para exportar.", {
       status: 200,
       headers: { "Content-Type": "text/plain; charset=utf-8" },
@@ -40,16 +53,33 @@ export async function GET(request: Request) {
   }
 
   const ids = responses.map((r) => r.id);
-  const { data: answers } = await supabase
-    .from("survey_answers")
-    .select(
-      `response_id, numeric_value, text_value, choice_value,
-       question:survey_questions(question_text, question_type, order_index)`
-    )
-    .in("response_id", ids);
+  const CHUNK = 50;
+  const CONCURRENCY = 5;
+  const answers: any[] = [];
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += CHUNK) chunks.push(ids.slice(i, i + CHUNK));
+  for (let i = 0; i < chunks.length; i += CONCURRENCY) {
+    const results = await Promise.all(
+      chunks.slice(i, i + CONCURRENCY).map((chunk) =>
+        supabase
+          .from("survey_answers")
+          .select(
+            `response_id, numeric_value, text_value, choice_value,
+             question:survey_questions(question_text, question_type, order_index)`
+          )
+          .in("response_id", chunk)
+          .limit(5000)
+      )
+    );
+    for (const r of results) {
+      if (r.error)
+        return NextResponse.json({ error: "Falha ao exportar." }, { status: 500 });
+      answers.push(...(r.data ?? []));
+    }
+  }
 
   const grouped = new Map<string, any[]>();
-  for (const a of answers ?? []) {
+  for (const a of answers) {
     const arr = grouped.get(a.response_id) ?? [];
     arr.push(a);
     grouped.set(a.response_id, arr);

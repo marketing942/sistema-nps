@@ -14,6 +14,7 @@ Sistema interno de gestão da satisfação dos clientes, com painel administrati
 2. No SQL Editor, rode na ordem:
    - `supabase/schema.sql` (tabelas, views, função `fn_metrics_overview` e RLS)
    - `supabase/seed.sql` (cadastra as duas unidades de negócio e produtos iniciais)
+   - `supabase/migrations/001…004` na ordem, **se o banco já existia** (a `004_performance.sql` cria índices e as funções `fn_nps_distribution` / `fn_nps_evolution` usadas pelo dashboard — o deploy novo do app precisa dela aplicada antes)
 3. Em **Authentication → Users**, crie o e-mail/senha do administrador (login do painel).
 4. Em **Project Settings → API**, copie a URL do projeto e a `anon key`.
 
